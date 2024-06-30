@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-daily-statistics-plugin",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "This is a sample plugin for Obsidian. Count the number of words in daily notes",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
