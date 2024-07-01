@@ -12,7 +12,6 @@ import {
 import {DailyStatisticsDataManager} from "./DailyStatistics";
 
 
-
 interface DailyStatisticsSettings {
 	dataFile: string
 }
@@ -31,7 +30,12 @@ export default class MyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.statisticsDataManager = new DailyStatisticsDataManager(this.settings.dataFile, this.app);
+
+		// 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
+		await new Promise(resolve => setTimeout(resolve, 3 * 1000));
+
+
+		this.statisticsDataManager = new DailyStatisticsDataManager(this.settings.dataFile, this.app, this);
 		await this.statisticsDataManager.loadStatisticsData()
 
 		this.debouncedUpdate = debounce((contents: string, filepath: string) => {
@@ -59,7 +63,6 @@ export default class MyPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on("quick-preview", this.onQuickPreview.bind(this))
 		);
-
 
 		// 保存数据
 		this.registerInterval(window.setInterval(() => {

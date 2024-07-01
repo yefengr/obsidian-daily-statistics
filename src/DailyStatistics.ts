@@ -1,4 +1,4 @@
-import {App, TFile} from "obsidian";
+import {App, Plugin, TFile} from "obsidian";
 
 
 export interface WordCount {
@@ -19,28 +19,30 @@ export class DailyStatisticsDataManager {
 
 	app: App
 	data: DailyStatisticsData
+	plugin: Plugin
 
-	constructor(dataFile: string, app: App) {
-		if (dataFile == null || dataFile == "") {
-			dataFile = app.vault.configDir.concat("/daily-statistics.json")
-		}
+	constructor(dataFile: string, app: App, plugin: Plugin) {
 		this.filePath = dataFile;
 		this.app = app;
+		this.plugin = plugin
 	}
 
 
 	// 加载数据
 	async loadStatisticsData() {
 		console.info("loadStatisticsData, dataFile is " + this.filePath)
-		this.file = this.app.vault.getFileByPath(this.filePath);
-		if (this.file == null) {
-			console.info("create dataFile " + this.filePath)
-			this.file = await this.app.vault.create(this.filePath, JSON.stringify(new DailyStatisticsData()))
-		}
-		console.info("loadStatisticsData, this.file  is " + this.file)
-		this.data = JSON.parse(await this.app.vault.read(this.file));
-		console.info("loadStatisticsData, this.data  is " + JSON.stringify(this.data))
 
+		// 如果配置文件为空，则从默认的设置中加载杜
+		if (this.filePath == null || this.filePath == "") {
+			this.data = Object.assign({}, await this.plugin.loadData());
+		} else {
+			this.file = this.app.vault.getFileByPath(this.filePath);
+			if (this.file == null) {
+				console.info("create dataFile " + this.filePath)
+				this.file = await this.app.vault.create(this.filePath, JSON.stringify(new DailyStatisticsData()))
+			}
+			this.data = JSON.parse(await this.app.vault.read(this.file));
+		}
 
 		this.updateDate();
 		if (this.data.dayCounts.hasOwnProperty(this.today)) {
@@ -51,13 +53,55 @@ export class DailyStatisticsDataManager {
 
 	}
 
+	//
+	// /**
+	//  *  判断文件是否存在
+	//  * @param path
+	//  */
+	// fileExists(path: string) {
+	// 	try {
+	// 		fs.accessSync(path, fs.constants.F_OK);
+	// 		return true
+	// 	} catch (_) {
+	// 		console.info("file not exists:" + path)
+	// 	}
+	// 	return false
+	// }
+	//
+	// async readFile(path: string) {
+	// 	try {
+	// 		this.data = new DailyStatisticsData()
+	// 		if (!this.fileExists(path)) {
+	// 			await fs.promises.writeFile(path, JSON.stringify(this.data), 'utf8');
+	// 		} else {
+	// 			this.data = JSON.parse(await fs.promises.readFile(path, 'utf8'));
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('读取文件出错：', error);
+	// 	}
+	// }
+	//
+	// async writeFile(path: string) {
+	// 	try {
+	// 		await fs.promises.writeFile(path, JSON.stringify(this.data), 'utf8');
+	// 	} catch (error) {
+	// 		console.error('写文件出错：', error);
+	// 	}
+	// }
+
+
 	// 保存数据
 	async saveStatisticsData() {
 		this.updateDate()
-		if (this.filePath != null && this.filePath != "" && this.file != null) {
+		if (this.filePath != null && this.filePath != "") {
+			if (this.file == null) {
+				this.file = await this.app.vault.create(this.filePath, JSON.stringify(this.data))
+			}
 			await this.app.vault.modify(this.file, JSON.stringify(this.data))
 		} else {
-			console.error("filePath is null, can not save data")
+			const data = await this.plugin.loadData()
+			Object.assign(data, this.data);
+			await this.plugin.saveData(data);
 		}
 	}
 
@@ -99,7 +143,8 @@ export class DailyStatisticsDataManager {
 
 	updateDate() {
 		const d = new Date();
-		this.today = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+		this.today = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+		// console.info("updateDate, today is " + this.today)
 	}
 
 
