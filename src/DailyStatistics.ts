@@ -1,4 +1,5 @@
 import {App, Plugin, TFile} from "obsidian";
+import {DailyStatisticsSettings} from "./Settting";
 
 
 export interface WordCount {
@@ -35,6 +36,8 @@ export class DailyStatisticsDataManager {
 		// 如果配置文件为空，则从默认的设置中加载杜
 		if (this.filePath == null || this.filePath == "") {
 			this.data = Object.assign({}, await this.plugin.loadData());
+			// 移除配置相关的属性
+			this.removeProperties(this.data, new DailyStatisticsSettings())
 		} else {
 			this.file = this.app.vault.getFileByPath(this.filePath);
 			if (this.file == null) {
@@ -51,6 +54,18 @@ export class DailyStatisticsDataManager {
 			this.currentWordCount = 0;
 		}
 
+	}
+
+	removeProperties(obj: Record<string, any>, propsToRemove: Record<string, any>): void {
+		// 获取要删除属性的名称数组
+		const keysToRemove = Object.keys(propsToRemove);
+
+		// 遍历要删除的属性名称，并从原始对象中删除它们
+		keysToRemove.forEach(key => {
+			if (obj.hasOwnProperty(key)) {
+				delete obj[key];
+			}
+		});
 	}
 
 	//
@@ -92,37 +107,24 @@ export class DailyStatisticsDataManager {
 
 	// 保存数据
 	async saveStatisticsData() {
-		this.updateDate()
-		if (this.filePath != null && this.filePath != "") {
-			if (this.file == null) {
-				this.file = await this.app.vault.create(this.filePath, JSON.stringify(this.data))
+		try {
+			this.updateDate()
+			if (this.filePath != null && this.filePath != "") {
+				if (this.file == null) {
+					this.file = await this.app.vault.create(this.filePath, JSON.stringify(this.data))
+				}
+				await this.app.vault.modify(this.file, JSON.stringify(this.data))
+			} else {
+				const data = await this.plugin.loadData()
+				Object.assign(data, this.data);
+				await this.plugin.saveData(data);
 			}
-			await this.app.vault.modify(this.file, JSON.stringify(this.data))
-		} else {
-			const data = await this.plugin.loadData()
-			Object.assign(data, this.data);
-			await this.plugin.saveData(data);
+		} catch (error) {
+			console.error('保存统计数据出错：', error);
 		}
 	}
 
 	getWordCount(text: string) {
-		// let words = 0;
-		//
-		// const matches = text.match(
-		// 	/[a-zA-Z0-9_\u0392-\u03c9\u00c0-\u00ff\u0600-\u06ff]+|[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/gm
-		// );
-		//
-		// if (matches) {
-		// 	for (let i = 0; i < matches.length; i++) {
-		// 		if (matches[i].charCodeAt(0) > 19968) {
-		// 			words += matches[i].length;
-		// 		} else {
-		// 			words += 1;
-		// 		}
-		// 	}
-		// }
-		//
-		// return words;
 		return text.length
 	}
 
