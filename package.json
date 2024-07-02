@@ -1,24 +1,41 @@
 {
-	"name": "obsidian-daily-statistics-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian. Count the number of words in daily notes",
-	"main": "src/main.js",
-	"scripts": {
-		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
-		"esbuild": "0.17.3",
-		"obsidian": "latest",
-		"tslib": "2.4.0",
-		"typescript": "4.7.4"
-	}
+  "name": "obsidian-vue-starter",
+  "version": "0.0.0",
+  "description": "A plugin development template for devs who want to use vue in Obsidian.",
+  "main": "main.js",
+  "scripts": {
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
+    "dev": "npm run lint && vite build --watch",
+    "build": "npm run type-check && vite build",
+    "format": "prettier --write src/",
+    "updateVersion": "tsx scripts/updateVersion.ts"
+  },
+  "keywords": [],
+  "author": "Otto",
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.10.1",
+    "@tsconfig/node18": "^2.0.1",
+    "@types/node": "^18.19.29",
+    "@typescript-eslint/eslint-plugin": "5.32.0",
+    "@typescript-eslint/parser": "5.32.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/eslint-config-prettier": "^7.1.0",
+    "@vue/eslint-config-typescript": "^11.0.3",
+    "@vue/tsconfig": "^0.4.0",
+    "builtin-modules": "3.3.0",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^10.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.24.0",
+    "inquirer": "^9.2.17",
+    "obsidian": "latest",
+    "prettier": "^2.8.8",
+    "tslib": "2.4.0",
+    "typescript": "4.7.4",
+    "vite": "^5.2.8",
+    "vue": "^3.4.21",
+    "vue-tsc": "^2.0.10"
+  },
+  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
 }
