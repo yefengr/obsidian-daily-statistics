@@ -11,12 +11,7 @@ import {
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/Settting";
 import { DailyStatisticsDataManager } from "@/DailyStatistics";
-import { ExampleView, VIEW_TYPE_EXAMPLE } from "@/ui/ExampleView";
-import { createApp, type App as VueApp } from "vue";
-import SettingsPage from "./ui/settings.vue";
-import ModalPage from "./ui/modal.vue";
-
-
+import { Calendar, VIEW_TYPE_EXAMPLE } from "@/ui/Calendar";
 
 
 // 核心
@@ -30,11 +25,9 @@ export default class MyPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-    // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
     // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
     this.statisticsDataManager = new DailyStatisticsDataManager(
       this.settings.dataFile,
@@ -90,7 +83,7 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SampleSettingTab(this.app, this));
     // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
-    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf));
+    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new Calendar(leaf));
     this.addRibbonIcon("dice", "Activate view", () => {
       this.activateView();
     });
@@ -123,7 +116,8 @@ export default class MyPlugin extends Plugin {
     // });
   }
 
-  onunload() {}
+  onunload() {
+  }
 
   async activateView() {
     const { workspace } = this.app;
@@ -211,63 +205,3 @@ class SampleSettingTab extends PluginSettingTab {
   }
 }
 
-
-/**
- * 添加 设置面板
- */
-class SampleSettingTab2 extends PluginSettingTab {
-  plugin: Plugin;
-  _vueApp: VueApp | undefined;
-
-  constructor(app: App, plugin: Plugin) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-
-  display(): void {
-    const _app = createApp(SettingsPage, {
-      plugin: this.plugin,
-    });
-    this._vueApp = _app;
-    _app.mount(this.containerEl);
-  }
-  hide() {
-    if (this._vueApp) {
-      this._vueApp.unmount();
-    }
-    this.containerEl.empty();
-  }
-}
-
-/**
- * 第一次上传需要添加默认值
- */
-export class MyPublishModal extends Modal {
-  _vueApp: VueApp | undefined;
-  plugin: Plugin;
-
-  file: TFile;
-
-  constructor(app: App, plugin: Plugin, file: TFile) {
-    super(app);
-    this.plugin = plugin;
-    this.file = file;
-  }
-
-  onOpen() {
-    const _app = createApp(ModalPage, {
-      plugin: this.plugin,
-      modal: this,
-      file: this.file,
-    });
-    this._vueApp = _app;
-    _app.mount(this.containerEl);
-  }
-
-  onClose() {
-    if (this._vueApp) {
-      this._vueApp.unmount();
-    }
-    this.containerEl.empty();
-  }
-}

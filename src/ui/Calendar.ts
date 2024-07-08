@@ -1,11 +1,13 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createApp, type App as VueApp } from "vue";
 import Calendar from "@/ui/Calendar.vue";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
+import ElementPlus from "element-plus";
 
 
 export const VIEW_TYPE_EXAMPLE = "example-view";
 
-export class ExampleView extends ItemView {
+export class Calendar extends ItemView {
 
   _vueApp: VueApp | undefined;
 

@@ -113,11 +113,11 @@ export class DailyStatisticsDataManager {
   // 保存数据
   async saveStatisticsData() {
     try {
-      console.info("saveStatisticsData…………");
+      // console.info("saveStatisticsData…………");
 
       this.updateDate();
       if (this.filePath != null && this.filePath != "") {
-        console.info("saveStatisticsData, dataFile is " + this.filePath);
+        // console.info("saveStatisticsData, dataFile is " + this.filePath);
         if (this.file == null) {
           this.file = await this.app.vault.create(
             this.filePath,
@@ -126,9 +126,9 @@ export class DailyStatisticsDataManager {
         }
         await this.app.vault.modify(this.file, JSON.stringify(this.data));
       } else {
-        console.info("saveStatisticsData, save data in setting");
+        // console.info("saveStatisticsData, save data in setting");
         let data = await this.plugin.loadData();
-        console.info("saveStatisticsData, data is " + JSON.stringify(data));
+        // console.info("saveStatisticsData, data is " + JSON.stringify(data));
         if (data == null) {
           data = {};
         }

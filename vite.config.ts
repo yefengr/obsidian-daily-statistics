@@ -52,6 +52,7 @@ export default defineConfig(({ command }) => {
           ]);
           console.log("复制结果到", dist);
         },
+
       },
       AutoImport({
         resolvers: [ElementPlusResolver()],
