@@ -33,7 +33,10 @@ export class DailyStatisticsDataManager {
 
     // 如果配置文件为空，则从默认的设置中加载杜
     if (this.filePath == null || this.filePath == "") {
-      this.data = Object.assign(new DailyStatisticsData(), await this.plugin.loadData());
+      this.data = Object.assign(
+        new DailyStatisticsData(),
+        await this.plugin.loadData()
+      );
       // 移除配置相关的属性
       this.removeProperties(this.data, new DailyStatisticsSettings());
     } else {
@@ -110,8 +113,11 @@ export class DailyStatisticsDataManager {
   // 保存数据
   async saveStatisticsData() {
     try {
+      console.info("saveStatisticsData…………");
+
       this.updateDate();
       if (this.filePath != null && this.filePath != "") {
+        console.info("saveStatisticsData, dataFile is " + this.filePath);
         if (this.file == null) {
           this.file = await this.app.vault.create(
             this.filePath,
@@ -120,7 +126,12 @@ export class DailyStatisticsDataManager {
         }
         await this.app.vault.modify(this.file, JSON.stringify(this.data));
       } else {
-        const data = await this.plugin.loadData();
+        console.info("saveStatisticsData, save data in setting");
+        let data = await this.plugin.loadData();
+        console.info("saveStatisticsData, data is " + JSON.stringify(data));
+        if (data == null) {
+          data = {};
+        }
         Object.assign(data, this.data);
         await this.plugin.saveData(data);
       }
@@ -136,7 +147,9 @@ export class DailyStatisticsDataManager {
   updateWordCount(contents: string, filepath: string) {
     const curr = this.getWordCount(contents);
     if (Object.prototype.hasOwnProperty.call(this.data.dayCounts, this.today)) {
-      if (Object.prototype.hasOwnProperty.call(this.data.todayWordCount, filepath)) {
+      if (
+        Object.prototype.hasOwnProperty.call(this.data.todayWordCount, filepath)
+      ) {
         //updating existing file
         this.data.todayWordCount[filepath].current = curr;
       } else {

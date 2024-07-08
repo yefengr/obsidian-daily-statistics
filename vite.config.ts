@@ -9,6 +9,10 @@ import path from "path";
 import fs from "fs/promises";
 import manifest from "./manifest.json";
 
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 const env = dotenv.config();
@@ -21,10 +25,10 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       {
-        name: "postbuild-commands",
+        // 复制文件夹
+        name: "post-build-commands",
         async closeBundle() {
           if (!isWatch) return;
-
           if (!process.env.OB_PLUGIN_DIST) {
             console.log(
               "为了更好的开发体验，你可以在 .env 中配置 OB_PLUGIN_DIST"
@@ -44,11 +48,17 @@ export default defineConfig(({ command }) => {
             await copy("./main.js", dist),
             await copy("./styles.css", dist),
             await copy("./manifest.json", dist),
-            await copy("./.hotreload", dist),
+            // await copy("./.hotreload", dist)
           ]);
           console.log("复制结果到", dist);
         },
       },
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
     ],
     build: {
       target: "esnext",
@@ -95,17 +105,17 @@ export default defineConfig(({ command }) => {
           "@lezer/common",
           "@lezer/lr",
           "@lezer/highlight",
-          ...builtins,
-        ],
+          ...builtins
+        ]
       },
       // Use root as the output dir
       emptyOutDir: false,
-      outDir: ".",
+      outDir: "."
     },
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "src"),
-      },
-    },
+        "@": path.resolve(__dirname, "src")
+      }
+    }
   };
 });

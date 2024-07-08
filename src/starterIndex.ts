@@ -2,27 +2,22 @@ import {
   App,
   debounce,
   type Debouncer,
-  MarkdownView,
-  Modal,
-  Notice,
+  MarkdownView, Modal,
   Plugin,
   PluginSettingTab,
   Setting,
-  TFile
+  TFile,
+  type WorkspaceLeaf
 } from "obsidian";
+import { DailyStatisticsSettings } from "@/Settting";
+import { DailyStatisticsDataManager } from "@/DailyStatistics";
+import { ExampleView, VIEW_TYPE_EXAMPLE } from "@/ui/ExampleView";
 import { createApp, type App as VueApp } from "vue";
 import SettingsPage from "./ui/settings.vue";
 import ModalPage from "./ui/modal.vue";
-import { DailyStatisticsSettings } from "@/Settting";
-import { DailyStatisticsDataManager } from "@/DailyStatistics";
 
-interface MyPluginSettings {
-  mySetting: string;
-}
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-  mySetting: "这是默认值"
-};
+
 
 // 核心
 export default class MyPlugin extends Plugin {
@@ -36,39 +31,48 @@ export default class MyPlugin extends Plugin {
     await this.loadSettings();
 
     // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    await new Promise(resolve => setTimeout(resolve, 6 * 1000));
-
+    await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
     // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    await new Promise(resolve => setTimeout(resolve, 6 * 1000));
+    await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
-    this.statisticsDataManager = new DailyStatisticsDataManager(this.settings.dataFile, this.app, this);
+    this.statisticsDataManager = new DailyStatisticsDataManager(
+      this.settings.dataFile,
+      this.app,
+      this
+    );
     await this.statisticsDataManager.loadStatisticsData();
 
-
-    this.debouncedUpdate = debounce((contents: string, filepath: string) => {
-      console.info("debounce updateWordCount" + filepath);
-      if (this.settings.statisticsFolder != null && this.settings.statisticsFolder != "" && this.settings.statisticsFolder != "/") {
-        // 检查路径是否匹配
-        if (!filepath.match(this.settings.statisticsFolder)) {
-          console.log("文件路径不匹配，不统计" + filepath);
-          return;
+    this.debouncedUpdate = debounce(
+      (contents: string, filepath: string) => {
+        console.info("debounce updateWordCount" + filepath);
+        if (
+          this.settings.statisticsFolder != null &&
+          this.settings.statisticsFolder != "" &&
+          this.settings.statisticsFolder != "/"
+        ) {
+          // 检查路径是否匹配
+          if (!filepath.match(this.settings.statisticsFolder)) {
+            console.log("文件路径不匹配，不统计" + filepath);
+            return;
+          }
         }
-      }
-      this.statisticsDataManager.updateWordCount(contents, filepath);
-
-    }, 400, false);
-
+        this.statisticsDataManager.updateWordCount(contents, filepath);
+      },
+      400,
+      false
+    );
 
     // 定时在的状态栏更新本日字数
     this.statusBarItemEl = this.addStatusBarItem();
     // statusBarItemEl.setText('Status Bar Text');
     this.registerInterval(
       window.setInterval(() => {
-        this.statusBarItemEl.setText(this.statisticsDataManager.currentWordCount + " words today ");
+        this.statusBarItemEl.setText(
+          this.statisticsDataManager.currentWordCount + " words today "
+        );
       }, 1000)
     );
-
 
     // 在快速预览时，更新统计数据
     this.registerEvent(
@@ -76,16 +80,22 @@ export default class MyPlugin extends Plugin {
     );
 
     // 定时保存数据
-    this.registerInterval(window.setInterval(() => {
-      this.statisticsDataManager.saveStatisticsData();
-    }, 1000));
-
+    this.registerInterval(
+      window.setInterval(() => {
+        this.statisticsDataManager.saveStatisticsData();
+      }, 1000)
+    );
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
+    // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
+    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf));
+    this.addRibbonIcon("dice", "Activate view", () => {
+      this.activateView();
+    });
 
-    this.addSettingTab(new SampleSettingTab(this.app, this));
+    // this.addSettingTab(new SampleSettingTab(this.app, this));
     //
     // this.registerEvent(
     //   this.app.workspace.on("file-menu", (menu, file) => {
@@ -113,13 +123,39 @@ export default class MyPlugin extends Plugin {
     // });
   }
 
-  onunload() {
+  onunload() {}
+
+  async activateView() {
+    const { workspace } = this.app;
+
+    let leaf: WorkspaceLeaf | null = null;
+    const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
+
+    if (leaves.length > 0) {
+      // A leaf with our view already exists, use that
+      leaf = leaves[0];
+    } else {
+      // Our view could not be found in the workspace, create a new leaf
+      // in the right sidebar for it
+      leaf = workspace.getRightLeaf(false);
+      if (leaf == null) {
+        console.error("leaf is null");
+        return;
+      }
+      await leaf.setViewState({ type: VIEW_TYPE_EXAMPLE, active: true });
+    }
+
+    // "Reveal" the leaf in case it is in a collapsed sidebar
+    workspace.revealLeaf(leaf);
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, new DailyStatisticsSettings(), await this.loadData());
+    this.settings = Object.assign(
+      {},
+      new DailyStatisticsSettings(),
+      await this.loadData()
+    );
   }
-
 
   // 保存配置文件
   async saveSettings() {
@@ -129,7 +165,6 @@ export default class MyPlugin extends Plugin {
     await this.saveData(data);
   }
 
-
   // 在预览时更新统计字数
   onQuickPreview(file: TFile, contents: string) {
     if (this.app.workspace.getActiveViewOfType(MarkdownView)) {
@@ -138,49 +173,49 @@ export default class MyPlugin extends Plugin {
   }
 }
 
-//
-// class SampleSettingTab extends PluginSettingTab {
-//   plugin: MyPlugin;
-//
-//   constructor(app: App, plugin: MyPlugin) {
-//     super(app, plugin);
-//     this.plugin = plugin;
-//   }
-//
-//   display(): void {
-//     const { containerEl } = this;
-//
-//     containerEl.empty();
-//
-//     new Setting(containerEl)
-//       .setName("设置统计数据保存地址")
-//       .setDesc("设置每日统计数据保存地址，如果为空，则保存在默认的插件目录下")
-//       .addText(text => text
-//         .setValue(this.plugin.settings.dataFile)
-//         .onChange(async (value) => {
-//           this.plugin.settings.dataFile = value;
-//           await this.plugin.saveSettings();
-//         }));
-//
-//     new Setting(containerEl)
-//       .setName("统计目录")
-//       .setDesc("设置需要统计数据的目录，如果为空，则统计全库的数据")
-//       .addText(text => text
-//         .setPlaceholder("全部")
-//         .setValue(this.plugin.settings.statisticsFolder)
-//         .onChange(async (value) => {
-//           this.plugin.settings.statisticsFolder = value;
-//           await this.plugin.saveSettings();
-//         }));
-//   }
-// }
+class SampleSettingTab extends PluginSettingTab {
+  plugin: MyPlugin;
 
+  constructor(app: App, plugin: MyPlugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+
+  display(): void {
+    const { containerEl } = this;
+
+    containerEl.empty();
+
+    new Setting(containerEl)
+      .setName("设置统计数据保存地址")
+      .setDesc("设置每日统计数据保存地址，如果为空，则保存在默认的插件目录下")
+      .addText((text) =>
+        text.setValue(this.plugin.settings.dataFile).onChange(async (value) => {
+          this.plugin.settings.dataFile = value;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    new Setting(containerEl)
+      .setName("统计目录")
+      .setDesc("设置需要统计数据的目录，如果为空，则统计全库的数据")
+      .addText((text) =>
+        text
+          .setPlaceholder("全部")
+          .setValue(this.plugin.settings.statisticsFolder)
+          .onChange(async (value) => {
+            this.plugin.settings.statisticsFolder = value;
+            await this.plugin.saveSettings();
+          })
+      );
+  }
+}
 
 
 /**
  * 添加 设置面板
  */
-class SampleSettingTab extends PluginSettingTab {
+class SampleSettingTab2 extends PluginSettingTab {
   plugin: Plugin;
   _vueApp: VueApp | undefined;
 
