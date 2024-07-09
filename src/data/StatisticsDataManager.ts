@@ -19,13 +19,15 @@ export class DailyStatisticsDataManager {
   currentWordCount!: number;
 
   app: App;
-  data!: DailyStatisticsData;
+  data: DailyStatisticsData;
   plugin: Plugin;
 
   constructor(dataFile: string, app: App, plugin: Plugin) {
     this.filePath = dataFile;
     this.app = app;
     this.plugin = plugin;
+    // 给一个默认值，避免出错
+    this.data = new DailyStatisticsData();
   }
 
   // 加载数据
@@ -41,6 +43,17 @@ export class DailyStatisticsDataManager {
       // 移除配置相关的属性
       this.removeProperties(this.data, new DailyStatisticsSettings());
     } else {
+      // 循环三次
+      for (let i = 0; i < 3; i++) {
+        this.file = this.app.vault.getFileByPath(this.filePath);
+        if (this.file != null) {
+          console.info("dataFile ready");
+          break;
+        }
+        console.info("waiting for dataFile…… ");
+        // 等待3秒
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
       this.file = this.app.vault.getFileByPath(this.filePath);
       if (this.file == null) {
         console.info("create dataFile " + this.filePath);
@@ -163,10 +176,14 @@ export class DailyStatisticsDataManager {
       this.data.todayWordCount[filepath] = { initial: curr, current: curr };
     }
     this.updateCounts();
+    this.saveStatisticsData().then(r => {
+      console.info("saveStatisticsData, save data");
+    });
+
   }
 
   updateDate() {
-    this.today = moment().format('YYYY-MM-DD');
+    this.today = moment().format("YYYY-MM-DD");
     // console.info("updateDate, today is " + this.today)
   }
 
@@ -176,8 +193,6 @@ export class DailyStatisticsDataManager {
       .reduce((a, b) => a + b, 0);
     this.data.dayCounts[this.today] = this.currentWordCount;
   }
-
-
 
 
   // // 获取指定月份的数据
