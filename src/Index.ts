@@ -8,7 +8,6 @@ import {
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
-import { CalendarView, VIEW_TYPE_EXAMPLE } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 
 
@@ -83,38 +82,38 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SampleSettingTab(this.app, this));
     // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
-    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
-    this.addRibbonIcon("dice", "Activate view", () => {
-      this.activateView();
-    });
+    // this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
+    // this.addRibbonIcon("dice", "Activate view", () => {
+    //   this.activateView();
+    // });
   }
 
   onunload() {
   }
 
-  async activateView() {
-    const { workspace } = this.app;
-
-    let leaf: WorkspaceLeaf | null = null;
-    const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
-
-    if (leaves.length > 0) {
-      // A leaf with our view already exists, use that
-      leaf = leaves[0];
-    } else {
-      // Our view could not be found in the workspace, create a new leaf
-      // in the right sidebar for it
-      leaf = workspace.getRightLeaf(false);
-      if (leaf == null) {
-        console.error("leaf is null");
-        return;
-      }
-      await leaf.setViewState({ type: VIEW_TYPE_EXAMPLE, active: true });
-    }
-
-    // "Reveal" the leaf in case it is in a collapsed sidebar
-    workspace.revealLeaf(leaf);
-  }
+  // async activateView() {
+  //   const { workspace } = this.app;
+  //
+  //   let leaf: WorkspaceLeaf | null = null;
+  //   const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
+  //
+  //   if (leaves.length > 0) {
+  //     // A leaf with our view already exists, use that
+  //     leaf = leaves[0];
+  //   } else {
+  //     // Our view could not be found in the workspace, create a new leaf
+  //     // in the right sidebar for it
+  //     leaf = workspace.getRightLeaf(false);
+  //     if (leaf == null) {
+  //       console.error("leaf is null");
+  //       return;
+  //     }
+  //     await leaf.setViewState({ type: VIEW_TYPE_EXAMPLE, active: true });
+  //   }
+  //
+  //   // "Reveal" the leaf in case it is in a collapsed sidebar
+  //   workspace.revealLeaf(leaf);
+  // }
 
   async loadSettings() {
     this.settings = Object.assign(
