@@ -42,7 +42,7 @@ export default class MyPlugin extends Plugin {
 
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
-        console.info("debounce updateWordCount" + filepath);
+        // console.info("debounce updateWordCount" + filepath);
         if (
           this.settings.statisticsFolder != null &&
           this.settings.statisticsFolder != "" &&
@@ -50,7 +50,7 @@ export default class MyPlugin extends Plugin {
         ) {
           // 检查路径是否匹配
           if (!filepath.match(this.settings.statisticsFolder)) {
-            console.log("文件路径不匹配，不统计" + filepath);
+            // console.log("文件路径不匹配，不统计" + filepath);
             return;
           }
         }

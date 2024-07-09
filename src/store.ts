@@ -18,7 +18,7 @@ const store = createStore<StatisticsData>({
   getters: {
 
     getByMonth(state) {
-      console.info("getByMonth", state.month, state.dayCounts);
+      // console.info("getByMonth", state.month, state.dayCounts);
       // return state.dayCounts;
 
       const monthData: Record<string, number> = {};
@@ -27,6 +27,7 @@ const store = createStore<StatisticsData>({
           monthData[date] = state.dayCounts[date];
         }
       }
+      // console.info("getByMonth", state.month, monthData);
       return monthData;
     }
 
@@ -39,8 +40,8 @@ const store = createStore<StatisticsData>({
     },
 
     updateStatisticsData(state, dayCounts: Record<string, number>) {
-      // console.info("updateStatisticsData", dayCounts, state.month, state.dayCounts);
-      state.dayCounts = dayCounts;
+      state.dayCounts = { ...dayCounts };
+      // console.info("updateStatisticsData:", state.dayCounts);
     }
 
   }
