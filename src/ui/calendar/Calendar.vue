@@ -50,7 +50,7 @@ import "element-plus/theme-chalk/dark/css-vars.css";
 // 国际化¬
 import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-import store from "@/store";
+import store from "@/data/Store";
 import { computed } from "vue";
 import { ref, watch } from "vue";
 

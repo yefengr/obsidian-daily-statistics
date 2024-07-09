@@ -1,8 +1,8 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createApp, type App as VueApp } from "vue";
-import Calendar from "@/ui/Calendar.vue";
-import store from "@/store";
-import MyPlugin from "@/starterIndex";
+import Calendar from "@/ui/calendar/Calendar.vue";
+import store from "@/data/Store";
+import MyPlugin from "@/Index";
 import moment from "moment";
 
 
@@ -32,7 +32,7 @@ export class CalendarView extends ItemView {
     // const container = this.containerEl.children[1];
     // container.empty();
     // container.createEl("h4", { text: "Example view" });
-    console.info("CalendarView onOpen");
+    // console.info("CalendarView onOpen");
 
 
     // 先设置时间为当月
@@ -70,7 +70,7 @@ export class CalendarView extends ItemView {
 
   async onClose() {
 
-    console.info("CalendarView onClose");
+    // console.info("CalendarView onClose");
     // Nothing to clean up.
     if (this._vueApp) {
       this._vueApp.unmount();
@@ -82,13 +82,4 @@ export class CalendarView extends ItemView {
     }
   }
 
-  onload() {
-    super.onload();
-    console.info("CalendarView onload");
-  }
-
-  onunload() {
-    super.onunload();
-    console.info("CalendarView onunload");
-  }
 }

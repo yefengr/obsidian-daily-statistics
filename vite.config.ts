@@ -68,7 +68,7 @@ export default defineConfig(({ command }) => {
         ignoreTryCatch: false,
       },
       lib: {
-        entry: fileURLToPath(new URL("./src/starterIndex.ts", import.meta.url)),
+        entry: fileURLToPath(new URL("./src/Index.ts", import.meta.url)),
         formats: ["cjs"],
       },
       css: {},
