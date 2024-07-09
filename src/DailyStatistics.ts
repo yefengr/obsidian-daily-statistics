@@ -1,5 +1,6 @@
 import { App, Plugin, TFile } from "obsidian";
 import { DailyStatisticsSettings } from "./Settting";
+import moment from "moment";
 
 export interface WordCount {
   initial: number;
@@ -165,8 +166,7 @@ export class DailyStatisticsDataManager {
   }
 
   updateDate() {
-    const d = new Date();
-    this.today = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    this.today = moment().format('YYYY-MM-DD');
     // console.info("updateDate, today is " + this.today)
   }
 
@@ -176,4 +176,18 @@ export class DailyStatisticsDataManager {
       .reduce((a, b) => a + b, 0);
     this.data.dayCounts[this.today] = this.currentWordCount;
   }
+
+
+
+
+  // // 获取指定月份的数据
+  // getByMonth(month: string) {
+  //   const monthData: Record<string, number> = {};
+  //   for (const date in this.data.dayCounts) {
+  //     if (date.startsWith(month)) {
+  //       monthData[date] = this.data.dayCounts[date];
+  //     }
+  //   }
+  //   return monthData;
+  // }
 }

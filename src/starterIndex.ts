@@ -11,7 +11,8 @@ import {
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/Settting";
 import { DailyStatisticsDataManager } from "@/DailyStatistics";
-import { Calendar, VIEW_TYPE_EXAMPLE } from "@/ui/Calendar";
+import { CalendarView, VIEW_TYPE_EXAMPLE } from "@/ui/CalendarView";
+import moment from "moment/moment";
 
 
 // 核心
@@ -28,6 +29,9 @@ export default class MyPlugin extends Plugin {
 
     // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
     // await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
+
+
+
 
     this.statisticsDataManager = new DailyStatisticsDataManager(
       this.settings.dataFile,
@@ -83,7 +87,7 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SampleSettingTab(this.app, this));
     // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
-    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new Calendar(leaf));
+    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
     this.addRibbonIcon("dice", "Activate view", () => {
       this.activateView();
     });

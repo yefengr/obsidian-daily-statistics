@@ -42,6 +42,9 @@
     "vue-tsc": "^2.0.10"
   },
   "dependencies": {
-    "element-plus": "^2.7.6"
+    "@vueuse/core": "^10.11.0",
+    "element-plus": "^2.7.6",
+    "moment": "^2.30.1",
+    "vuex": "^4.1.0"
   }
 }
