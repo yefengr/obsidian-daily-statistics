@@ -163,10 +163,14 @@ export class DailyStatisticsDataManager {
       this.data.todayWordCount[filepath] = { initial: curr, current: curr };
     }
     this.updateCounts();
+    this.saveStatisticsData().then(r => {
+      console.info("saveStatisticsData, save data");
+    });
+
   }
 
   updateDate() {
-    this.today = moment().format('YYYY-MM-DD');
+    this.today = moment().format("YYYY-MM-DD");
     // console.info("updateDate, today is " + this.today)
   }
 
@@ -176,8 +180,6 @@ export class DailyStatisticsDataManager {
       .reduce((a, b) => a + b, 0);
     this.data.dayCounts[this.today] = this.currentWordCount;
   }
-
-
 
 
   // // 获取指定月份的数据

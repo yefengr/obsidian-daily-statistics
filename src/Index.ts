@@ -71,13 +71,13 @@ export default class MyPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("quick-preview", this.onQuickPreview.bind(this))
     );
-
-    // 定时保存数据
-    this.registerInterval(
-      window.setInterval(() => {
-        this.statisticsDataManager.saveStatisticsData();
-      }, 1000)
-    );
+    //
+    // // 定时保存数据
+    // this.registerInterval(
+    //   window.setInterval(() => {
+    //     this.statisticsDataManager.saveStatisticsData();
+    //   }, 1000)
+    // );
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
