@@ -3,14 +3,23 @@
 
     <el-calendar v-model="day">
       <template #date-cell="{ data }">
+
         <div class="flex-centered">
           <p>
-            {{ data.day.split("-").slice(1).join("-") }}
-            {{ data.isSelected ? "✔️" : "" }}
-            {{ monthCounts[data.day] || 0 }}
+            {{ data.date.getDate() }}
           </p>
         </div>
 
+        <div class="flex-centered2">
+          <p>
+            {{ monthCounts[data.day] || 0 }}
+          </p>
+        </div>
+        <div class="flex-centered3 ">
+          <p class="complete">
+            {{ (monthCounts[data.day] || 0) > targetWordCont ? "✔️" : "" }}
+          </p>
+        </div>
       </template>
 
     </el-calendar>
@@ -39,7 +48,7 @@ const yearMon = moment(day.value).format("YYYY-MM");
 store.commit("updateMonth", yearMon);
 
 const monthCounts = computed(() => {
-  return store.getters.getByMonth || {};
+  return store.getters.dayCounts || {};
 });
 console.info("monthCounts", monthCounts.value);
 
@@ -52,6 +61,13 @@ watch(day, (newValue, oldValue) => {
   // console.info("monthCounts.value[2024-06-30]", monthCounts.value["2024-06-30"] ||0);
 });
 
+
+// 目标字数
+const targetWordCont = computed(() => {
+  return store.getters.targetWordCont;
+});
+
+
 </script>
 
 
@@ -60,15 +76,27 @@ watch(day, (newValue, oldValue) => {
   color: #1989fa;
 }
 
-.centered-text {
-  text-align: center; /* 水平居中文本 */
-}
 
 .flex-centered {
   display: flex; /* 启用 Flexbox */
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
-  height: 100%; /* 占满高度，根据需要调整 */
+  height: 40%; /* 占满高度，根据需要调整 */
+  font-weight: bold;
+}
+
+.flex-centered2 {
+  display: flex; /* 启用 Flexbox */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 30%; /* 占满高度，根据需要调整 */
+}
+
+.flex-centered3 {
+  display: flex; /* 启用 Flexbox */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 30%; /* 占满高度，根据需要调整 */
 }
 
 </style>

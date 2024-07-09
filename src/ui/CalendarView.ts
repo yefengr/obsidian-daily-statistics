@@ -41,6 +41,9 @@ export class CalendarView extends ItemView {
     // 存储数据
     this.updateData();
 
+    // 设置目标字数
+    store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
+
     // 创建并挂在组件
     const _app = createApp(Calendar);
     _app.use(store);
