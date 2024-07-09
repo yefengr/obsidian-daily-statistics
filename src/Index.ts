@@ -28,14 +28,18 @@ export default class MyPlugin extends Plugin {
     // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
     // await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
+    // 异步执行操作
+    new Promise((resolve) => setTimeout(resolve, 6 * 1000));
+
 
     this.statisticsDataManager = new DailyStatisticsDataManager(
       this.settings.dataFile,
       this.app,
       this
     );
-    await this.statisticsDataManager.loadStatisticsData();
-
+    this.statisticsDataManager.loadStatisticsData().then(r => {
+      console.info("loadStatisticsData success. ");
+    });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
         // console.info("debounce updateWordCount" + filepath);
