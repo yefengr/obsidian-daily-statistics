@@ -4,7 +4,7 @@ import moment from "moment/moment";
 
 interface StatisticsData {
   // // yyyy-mm
-  month: string;
+  currentMonth: string;
   dayCounts: Record<string, number>;
   targetWordCont: number;
 }
@@ -14,25 +14,28 @@ const store = createStore<StatisticsData>({
 
 
   state: {
-    month: "2024-01",
+    currentMonth: "2024-01",
     dayCounts: {},
     targetWordCont: 1000
   },
   getters: {
+
+    month(state) {
+      return state.currentMonth;
+    },
 
     // 返回当前月份与前后各一个月的数据
     dayCounts(state) {
       // console.info("getByMonth", state.month, state.dayCounts);
       // return state.dayCounts;
 
-      moment(state.month);
       // 获取指定月份的上一月和下一月
-      const prevMonth = moment(state.month).subtract(1, "month").format("YYYY-MM");
-      const nextMonth = moment(state.month).add(1, "month").format("YYYY-MM");
+      const prevMonth = moment(state.currentMonth).subtract(1, "month").format("YYYY-MM");
+      const nextMonth = moment(state.currentMonth).add(1, "month").format("YYYY-MM");
 
       const monthData: Record<string, number> = {};
       for (const date in state.dayCounts) {
-        if (date.startsWith(state.month) || date.startsWith(prevMonth) || date.startsWith(nextMonth)) {
+        if (date.startsWith(state.currentMonth) || date.startsWith(prevMonth) || date.startsWith(nextMonth)) {
           monthData[date] = state.dayCounts[date];
         }
       }
@@ -49,7 +52,7 @@ const store = createStore<StatisticsData>({
 
 
     updateMonth(state, month: string) {
-      state.month = month;
+      state.currentMonth = month;
     },
 
     updateStatisticsData(state, dayCounts: Record<string, number>) {

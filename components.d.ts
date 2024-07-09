@@ -8,5 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElCalendar: typeof import('element-plus/es')['ElCalendar']
+    ElProgress: typeof import('element-plus/es')['ElProgress']
   }
 }

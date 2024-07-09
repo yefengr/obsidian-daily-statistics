@@ -1,3 +1,12 @@
 # obsidian-vue-starter
 
-A starter template for creating an Obsidian plugin with Vue.
+## 介绍
+统计每日书写的字数，并展示在日历中。
+
+## 功能
+- [x] 统计每日字数
+- [x] 指定需要统计的文件夹
+- [x] 设置每日目标
+- [ ] 多语言配置
+
+

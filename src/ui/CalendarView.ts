@@ -59,7 +59,7 @@ export class CalendarView extends ItemView {
 
   private updateData() {
     try {
-      console.info("CalendarView updateData ");
+      // console.info("CalendarView updateData ");
       // const data = this.plugin.statisticsDataManager.getByMonth(store.state.month);
       const dayCounts = this.plugin.statisticsDataManager.data.dayCounts;
       store.commit("updateStatisticsData", dayCounts);
