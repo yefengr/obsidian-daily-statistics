@@ -1,4 +1,4 @@
-// store.ts
+// Store.ts
 import { createStore } from "vuex";
 import moment from "moment/moment";
 
