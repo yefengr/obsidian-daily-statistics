@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import builtins from "builtin-modules";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
-// import process from "node:process";
+import process from "node:process";
 import path from "path";
 
 import fs from "fs/promises";
@@ -29,18 +29,18 @@ export default defineConfig(({ command }) => {
         // 复制文件夹
         name: "post-build-commands",
         async closeBundle() {
-          // if (!isWatch) return;
-          // if (!process.env.OB_PLUGIN_DIST) {
-          //   console.log(
-          //     "为了更好的开发体验，你可以在 .env 中配置 OB_PLUGIN_DIST"
-          //   );
-          //   return;
-          // }
-          // if (process.env.NODE_ENV === 'development') {
-          //   // 开发环境特有的配置
-          // }
+          if (!isWatch) return;
+          if (!process.env.OB_PLUGIN_DIST) {
+            console.log(
+              "为了更好的开发体验，你可以在 .env 中配置 OB_PLUGIN_DIST"
+            );
+            return;
+          }
+          if (process.env.NODE_ENV === 'development') {
+            // 开发环境特有的配置
+          }
           // console.log("command is " + command);
-          const dist = "/Users/yefeng/Desktop/daily-statistics/.obsidian/plugins/" + manifest.id + "-dev";
+          const dist = process.env.OB_PLUGIN_DIST + manifest.id + "-dev";
 
           await fs.mkdir(dist, { recursive: true });
 
