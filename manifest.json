@@ -1,9 +1,9 @@
 {
-  "id": "obsidian-daily-statistics",
+  "id": "daily-statistics",
   "name": "Daily Statistics",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "minAppVersion": "0.120",
-  "description": "Daily Statistics",
+  "description": "统计每日书写的字数，并展示在日历中。",
   "author": "yefengr",
   "authorUrl": "https://github.com/yefengr",
   "isDesktopOnly": true
