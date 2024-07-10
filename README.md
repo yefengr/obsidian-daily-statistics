@@ -12,7 +12,6 @@
 - [ ] 多语言配置
 
 
-
 ## 其他
 
 这个插件的许多功能参考了[obsidian-word-count](https://github.com/lukeleppan/better-word-count) 和 [obsidian-daily-stats](https://github.com/dhruvik7/obsidian-daily-stats)。
