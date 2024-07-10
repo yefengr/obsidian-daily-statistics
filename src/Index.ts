@@ -138,7 +138,10 @@ export default class MyPlugin extends Plugin {
   // 保存配置文件
   async saveSettings() {
     // 先获取最新的数据，再将新的配置保存进去
-    const data = await this.loadData();
+    let data = await this.loadData();
+    if (data == null){
+      data = new DailyStatisticsSettings();
+    }
     Object.assign(data, this.settings);
     await this.saveData(data);
   }
