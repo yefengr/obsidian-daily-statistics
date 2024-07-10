@@ -5,6 +5,8 @@
 
 ![img.png](img.png)
 
+移动端插件：[daily-statistics-mobie](https://github.com/yefengr/obsidian-daily-statistics-mobie)
+
 ## 功能
 - [x] 统计每日字数
 - [x] 指定需要统计的文件夹
