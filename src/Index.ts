@@ -1,4 +1,5 @@
 import {
+  addIcon,
   debounce,
   type Debouncer,
   MarkdownView,
@@ -8,7 +9,7 @@ import {
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
-import { CalendarView, VIEW_TYPE_EXAMPLE } from "@/ui/calendar/CalendarView";
+import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 
 
@@ -87,9 +88,15 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SampleSettingTab(this.app, this));
     // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
-    this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
-    this.addRibbonIcon("dice", "Activate view", () => {
-      this.activateView();
+    this.registerView(Calendar_View, (leaf) => new CalendarView(leaf, this));
+    await this.activateView();
+
+    this.addCommand({
+      id: "obsidian-daily-statistics-open-calendar",
+      name: "打开日历面板",
+      callback: () => {
+        this.activateView();
+      }
     });
   }
 
@@ -100,7 +107,7 @@ export default class MyPlugin extends Plugin {
     const { workspace } = this.app;
 
     let leaf: WorkspaceLeaf | null = null;
-    const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
+    const leaves = workspace.getLeavesOfType(Calendar_View);
 
     if (leaves.length > 0) {
       // A leaf with our view already exists, use that
@@ -113,7 +120,7 @@ export default class MyPlugin extends Plugin {
         console.error("leaf is null");
         return;
       }
-      await leaf.setViewState({ type: VIEW_TYPE_EXAMPLE, active: true });
+      await leaf.setViewState({ type: Calendar_View, active: true });
     }
 
     // "Reveal" the leaf in case it is in a collapsed sidebar

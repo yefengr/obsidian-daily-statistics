@@ -3,18 +3,19 @@ import { defineConfig } from "vite";
 import builtins from "builtin-modules";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
-import process from "node:process";
+// import process from "node:process";
 import path from "path";
 
 import fs from "fs/promises";
 import manifest from "./manifest.json";
 
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
+
 const env = dotenv.config();
 dotenvExpand.expand(env);
 
@@ -28,14 +29,18 @@ export default defineConfig(({ command }) => {
         // 复制文件夹
         name: "post-build-commands",
         async closeBundle() {
-          if (!isWatch) return;
-          if (!process.env.OB_PLUGIN_DIST) {
-            console.log(
-              "为了更好的开发体验，你可以在 .env 中配置 OB_PLUGIN_DIST"
-            );
-            return;
-          }
-          const dist = process.env.OB_PLUGIN_DIST + manifest.id + "-dev";
+          // if (!isWatch) return;
+          // if (!process.env.OB_PLUGIN_DIST) {
+          //   console.log(
+          //     "为了更好的开发体验，你可以在 .env 中配置 OB_PLUGIN_DIST"
+          //   );
+          //   return;
+          // }
+          // if (process.env.NODE_ENV === 'development') {
+          //   // 开发环境特有的配置
+          // }
+          // console.log("command is " + command);
+          const dist = "/Users/yefeng/Desktop/daily-statistics/.obsidian/plugins/" + manifest.id + "-dev";
 
           await fs.mkdir(dist, { recursive: true });
 
@@ -47,36 +52,36 @@ export default defineConfig(({ command }) => {
           await Promise.all([
             await copy("./main.js", dist),
             await copy("./styles.css", dist),
-            await copy("./manifest.json", dist),
+            await copy("./manifest.json", dist)
             // await copy("./.hotreload", dist)
           ]);
           console.log("复制结果到", dist);
-        },
+        }
 
       },
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver()]
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
-      }),
+        resolvers: [ElementPlusResolver()]
+      })
     ],
     build: {
       target: "esnext",
       sourcemap: isWatch ? "inline" : false,
       commonjsOptions: {
-        ignoreTryCatch: false,
+        ignoreTryCatch: false
       },
       lib: {
         entry: fileURLToPath(new URL("./src/Index.ts", import.meta.url)),
-        formats: ["cjs"],
+        formats: ["cjs"]
       },
       css: {},
       rollupOptions: {
         output: {
           entryFileNames: "main.js",
           assetFileNames: "styles.css",
-          exports: "named",
+          exports: "named"
         },
         external: [
           "obsidian",

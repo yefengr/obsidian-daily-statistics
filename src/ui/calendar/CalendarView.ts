@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { type IconName, ItemView, WorkspaceLeaf } from "obsidian";
 import { createApp, type App as VueApp } from "vue";
 import Calendar from "@/ui/calendar/Calendar.vue";
 import store from "@/data/Store";
@@ -6,7 +6,7 @@ import MyPlugin from "@/Index";
 import moment from "moment";
 
 
-export const VIEW_TYPE_EXAMPLE = "example-view";
+export const Calendar_View = "CalendarView";
 
 export class CalendarView extends ItemView {
 
@@ -21,11 +21,15 @@ export class CalendarView extends ItemView {
   }
 
   getViewType() {
-    return VIEW_TYPE_EXAMPLE;
+    return Calendar_View;
   }
 
   getDisplayText() {
-    return "CalendarView";
+    return "Daily Statistics";
+  }
+
+  getIcon(): IconName {
+    return "calendar-with-checkmark";
   }
 
   async onOpen() {

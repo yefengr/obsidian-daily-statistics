@@ -9,7 +9,7 @@
     "dev1": "npm run lint && vite build --watch",
     "dev2": "vite build --watch",
     "dev": "vite build --watch",
-    "build": "npm run type-check && vite build",
+    "build": "npm run type-check && vite build --mode production",
     "format": "prettier --write src/",
     "updateVersion": "tsx scripts/updateVersion.ts"
   },
@@ -39,12 +39,12 @@
     "unplugin-vue-components": "^0.27.2",
     "vite": "^5.2.8",
     "vue": "^3.4.21",
-    "vue-tsc": "^2.0.10"
-  },
-  "dependencies": {
+    "vue-tsc": "^2.0.10",
     "@vueuse/core": "^10.11.0",
     "element-plus": "^2.7.6",
     "moment": "^2.30.1",
     "vuex": "^4.1.0"
+  },
+  "dependencies": {
   }
 }
