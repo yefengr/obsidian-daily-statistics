@@ -1,10 +1,10 @@
 {
   "id": "obsidian-daily-statistics",
   "name": "Daily Statistics",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "minAppVersion": "0.120",
   "description": "Daily Statistics",
   "author": "yefengr",
   "authorUrl": "https://github.com/yefengr",
-  "isDesktopOnly": false
+  "isDesktopOnly": true
 }
