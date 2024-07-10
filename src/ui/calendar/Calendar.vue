@@ -27,15 +27,15 @@
 
     <div class="progress">
       <p>
-        本日目标： {{ targetWordContOfDay }}
+        每日目标： {{ targetWordContOfDay }}
       </p>
       <el-progress :percentage="dayProgress" :status="dayProgress>=100 ?'success':''" />
       <p>
-        本周目标：{{ targetWordContOfDay * 7 }}
+        每周目标：{{ targetWordContOfDay * 7 }}
       </p>
       <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
       <p>
-        本月目标：{{ targetWordContOfDay * dayCountOfMonth }}
+        每月目标：{{ targetWordContOfDay * dayCountOfMonth }}
         <!--        , 本月：{{ dayCountOfMonth }}天。-->
       </p>
       <el-progress :percentage="monthProgress" :status="monthProgress>=100 ?'success':''" />
