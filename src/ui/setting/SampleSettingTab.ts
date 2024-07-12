@@ -1,13 +1,13 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import MyPlugin from "@/Index";
+import DailyStatisticsPlugin from "@/Index";
 
 /**
  * 设置页面
  */
 export class SampleSettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+  plugin: DailyStatisticsPlugin;
 
-  constructor(app: App, plugin: MyPlugin) {
+  constructor(app: App, plugin: DailyStatisticsPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }

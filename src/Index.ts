@@ -1,5 +1,4 @@
 import {
-  addIcon,
   debounce,
   type Debouncer,
   MarkdownView,
@@ -16,7 +15,7 @@ import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 /**
  * 插件核心类
  */
-export default class MyPlugin extends Plugin {
+export default class DailyStatisticsPlugin extends Plugin {
   settings!: DailyStatisticsSettings;
   statisticsDataManager!: DailyStatisticsDataManager;
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;

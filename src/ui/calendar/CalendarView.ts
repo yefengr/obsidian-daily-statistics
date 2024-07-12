@@ -2,7 +2,7 @@ import { type IconName, ItemView, WorkspaceLeaf } from "obsidian";
 import { createApp, type App as VueApp } from "vue";
 import Calendar from "@/ui/calendar/Calendar.vue";
 import store from "@/data/Store";
-import MyPlugin from "@/Index";
+import DailyStatisticsPlugin from "@/Index";
 import moment from "moment";
 
 
@@ -13,9 +13,9 @@ export class CalendarView extends ItemView {
   _vueApp: VueApp | undefined;
   intervalId: number | null = null;
 
-  plugin: MyPlugin;
+  plugin: DailyStatisticsPlugin;
 
-  constructor(leaf: WorkspaceLeaf, plugin: MyPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: DailyStatisticsPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
