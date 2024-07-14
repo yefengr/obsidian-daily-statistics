@@ -21,7 +21,7 @@ dotenvExpand.expand(env);
 
 const isWatch = process.argv.includes("--watch");
 
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
   return {
     plugins: [
       vue(),
@@ -39,7 +39,6 @@ export default defineConfig(({ command }) => {
           if (process.env.NODE_ENV === 'development') {
             // 开发环境特有的配置
           }
-          // console.log("command is " + command);
           const dist = process.env.OB_PLUGIN_DIST + manifest.id + "-dev";
 
           await fs.mkdir(dist, { recursive: true });

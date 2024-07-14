@@ -72,7 +72,7 @@ const monthCounts = computed(() => {
 // console.info("monthCounts", monthCounts.value);
 
 
-watch(day, (newValue, oldValue) => {
+watch(day, (newValue) => {
   // console.info("newValue", newValue);
   const yearMon = moment(newValue).format("YYYY-MM");
   store.commit("updateMonth", yearMon);

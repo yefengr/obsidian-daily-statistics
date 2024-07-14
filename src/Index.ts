@@ -24,14 +24,6 @@ export default class DailyStatisticsPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-
-    // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    // await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
-
-    // 异步执行操作
-    new Promise((resolve) => setTimeout(resolve, 6 * 1000));
-
-
     this.statisticsDataManager = new DailyStatisticsDataManager(
       this.settings.dataFile,
       this.app,
