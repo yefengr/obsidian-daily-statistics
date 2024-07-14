@@ -40,13 +40,10 @@ export class CalendarView extends ItemView {
     // console.info("CalendarView onOpen");
 
 
-    // 先设置时间为当月
+    // 初始化数据
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
-    // 存储数据
     store.commit("updateStatisticsData", this.plugin.statisticsDataManager.data.dayCounts);
-
-    // 设置目标字数
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
 
     // 创建并挂在组件
@@ -55,11 +52,6 @@ export class CalendarView extends ItemView {
     _app.mount(this.containerEl);
     this._vueApp = _app;
 
-    // 定时更新数据
-    // this.intervalId = setInterval(() => {
-    //   this.updateData();
-    // }, 1000);
-
     // 当有数据更新时，更新日历视图
     this.plugin.statisticsDataManager.addDataSaveListener(new class DailyStatisticsDataSaveListenerImpl
         implements DailyStatisticsDataSaveListener {
@@ -67,7 +59,6 @@ export class CalendarView extends ItemView {
           // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
           store.commit("updateStatisticsData", data.dayCounts);
         }
-
 
         getListenerId(): string {
           return "DailyStatisticsDataSaveListenerImpl-CalendarView";
