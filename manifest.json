@@ -3,7 +3,7 @@
   "name": "Daily Statistics",
   "version": "1.0.4",
   "minAppVersion": "0.120",
-  "description": "统计每日书写的字数，并展示在日历中。",
+  "description": "Count the number of words written each day and display it on a calendar.",
   "author": "yefengr",
   "authorUrl": "https://github.com/yefengr",
   "isDesktopOnly": true

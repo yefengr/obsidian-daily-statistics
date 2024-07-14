@@ -4,6 +4,7 @@ import Calendar from "@/ui/calendar/Calendar.vue";
 import store from "@/data/Store";
 import DailyStatisticsPlugin from "@/Index";
 import moment from "moment";
+import { DailyStatisticsData, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
 
 
 export const Calendar_View = "CalendarView";
@@ -43,7 +44,7 @@ export class CalendarView extends ItemView {
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
     // 存储数据
-    this.updateData();
+    store.commit("updateStatisticsData", this.plugin.statisticsDataManager.data.dayCounts);
 
     // 设置目标字数
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
@@ -55,22 +56,26 @@ export class CalendarView extends ItemView {
     this._vueApp = _app;
 
     // 定时更新数据
-    this.intervalId = setInterval(() => {
-      this.updateData();
-    }, 1000);
-  }
+    // this.intervalId = setInterval(() => {
+    //   this.updateData();
+    // }, 1000);
+
+    // 当有数据更新时，更新日历视图
+    this.plugin.statisticsDataManager.addDataSaveListener(new class DailyStatisticsDataSaveListenerImpl
+        implements DailyStatisticsDataSaveListener {
+        onSave(data: DailyStatisticsData): void {
+          // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
+          store.commit("updateStatisticsData", data.dayCounts);
+        }
 
 
-  private updateData() {
-    try {
-      // console.info("CalendarView updateData ");
-      // const data = this.plugin.statisticsDataManager.getByMonth(store.state.month);
-      const dayCounts = this.plugin.statisticsDataManager.data.dayCounts;
-      store.commit("updateStatisticsData", dayCounts);
-    } catch (error) {
-      console.error("CalendarView updateData error", error);
-    }
+        getListenerId(): string {
+          return "DailyStatisticsDataSaveListenerImpl-CalendarView";
+        }
+      }
+    );
   }
+
 
   async onClose() {
 
@@ -87,3 +92,5 @@ export class CalendarView extends ItemView {
   }
 
 }
+
+

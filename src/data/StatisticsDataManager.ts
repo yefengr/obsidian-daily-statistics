@@ -17,6 +17,7 @@ export class DailyStatisticsDataManager {
   file!: TFile | null;
   today!: string;
   currentWordCount!: number;
+  dataSaveListeners: DailyStatisticsDataSaveListener[] = [];
 
   app: App;
   data: DailyStatisticsData;
@@ -88,6 +89,10 @@ export class DailyStatisticsDataManager {
     });
   }
 
+  addDataSaveListener(listener: DailyStatisticsDataSaveListener) {
+    this.dataSaveListeners.push(listener);
+  }
+
   // 保存数据
   async saveStatisticsData() {
     try {
@@ -113,6 +118,18 @@ export class DailyStatisticsDataManager {
         Object.assign(data, this.data);
         await this.plugin.saveData(data);
       }
+
+      // 异步执行监听器
+      new Promise(() => {
+        for (const listener of this.dataSaveListeners) {
+          try {
+            listener.onSave(this.data);
+            // console.info("dataSaveListener 执行完成, listenerId is " + listener.getListenerId());
+          } catch (error) {
+            console.error("dataSaveListeners, 执行异常, listenerId is " + listener.getListenerId(), error);
+          }
+        }
+      });
     } catch (error) {
       console.error("保存统计数据出错：", error);
     }
@@ -140,9 +157,7 @@ export class DailyStatisticsDataManager {
       this.data.todayWordCount[filepath] = { initial: curr, current: curr };
     }
     this.updateCounts();
-    this.saveStatisticsData().then(r => {
-      console.info("saveStatisticsData, save data");
-    });
+
 
   }
 
@@ -156,7 +171,18 @@ export class DailyStatisticsDataManager {
       .map((wordCount) => Math.max(0, wordCount.current - wordCount.initial))
       .reduce((a, b) => a + b, 0);
     this.data.dayCounts[this.today] = this.currentWordCount;
+
+    this.saveStatisticsData().then();
   }
 
 
+}
+
+/**
+ * 保存数据监听
+ */
+export interface DailyStatisticsDataSaveListener {
+  onSave(data: DailyStatisticsData): void;
+
+  getListenerId(): string;
 }

@@ -37,7 +37,7 @@ export default class DailyStatisticsPlugin extends Plugin {
       this.app,
       this
     );
-    this.statisticsDataManager.loadStatisticsData().then(r => {
+    this.statisticsDataManager.loadStatisticsData().then(() => {
       console.info("loadStatisticsData success. ");
     });
     this.debouncedUpdate = debounce(
@@ -75,20 +75,17 @@ export default class DailyStatisticsPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("quick-preview", this.onQuickPreview.bind(this))
     );
-    //
-    // // 定时保存数据
-    // this.registerInterval(
-    //   window.setInterval(() => {
-    //     this.statisticsDataManager.saveStatisticsData();
-    //   }, 1000)
-    // );
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
-    // this.addSettingTab(new SampleSettingTab2(this.app, this));
 
     this.registerView(Calendar_View, (leaf) => new CalendarView(leaf, this));
-    await this.activateView();
+    new Promise(() => {
+      setTimeout(() => {
+        this.activateView();
+      }, 2000);
+    });
+
 
     this.addCommand({
       id: "obsidian-daily-statistics-open-calendar",
@@ -138,7 +135,7 @@ export default class DailyStatisticsPlugin extends Plugin {
   async saveSettings() {
     // 先获取最新的数据，再将新的配置保存进去
     let data = await this.loadData();
-    if (data == null){
+    if (data == null) {
       data = new DailyStatisticsSettings();
     }
     Object.assign(data, this.settings);
