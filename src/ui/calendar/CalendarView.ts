@@ -65,13 +65,23 @@ export class CalendarView extends ItemView {
         }
       }
     );
+
+    this.intervalId = setInterval(() => {
+      console.info("检查日期是否为当天……");
+      // 检查日期是否为当天，如果不是，则重新创建视图
+      if (moment().format("YYYY-MM-DD") !== moment(this.plugin.statisticsDataManager.today).format("YYYY-MM-DD")) {
+        console.info("日期更新，重置视图");
+        this.onClose();
+        this.onOpen();
+      }
+    }, 1000 * 60 * 60);
+    // }, 1000);
   }
 
 
   async onClose() {
 
     // console.info("CalendarView onClose");
-    // Nothing to clean up.
     if (this._vueApp) {
       this._vueApp.unmount();
     }
