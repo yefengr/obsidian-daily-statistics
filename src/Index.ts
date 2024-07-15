@@ -3,9 +3,7 @@ import {
   type Debouncer,
   MarkdownView,
   Plugin,
-  TFile,
-  type WorkspaceLeaf
-} from "obsidian";
+  TFile} from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
@@ -21,7 +19,6 @@ export default class DailyStatisticsPlugin extends Plugin {
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;
   private statusBarItemEl!: HTMLElement;
   t!: I18n;
-  calendarView!: CalendarView;
 
   async onload() {
     await this.loadSettings();
@@ -63,18 +60,7 @@ export default class DailyStatisticsPlugin extends Plugin {
       ]
     });
 
-    // 定时在的状态栏更新本日字数
-    this.statusBarItemEl = this.addStatusBarItem();
-    // statusBarItemEl.setText('Status Bar Text');
-    this.registerInterval(
-      window.setInterval(() => {
-        this.statusBarItemEl.setText(
-          this.t("今日字数：", "Today's word count: ") +
-          this.statisticsDataManager.currentWordCount
-        )
-        ;
-      }, 1000)
-    );
+
 
     // 在快速预览时，更新统计数据
     this.registerEvent(
@@ -84,26 +70,12 @@ export default class DailyStatisticsPlugin extends Plugin {
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
 
-    this.registerView(Calendar_View, (leaf) => {
-      this.calendarView = new CalendarView(leaf, this);
-      return this.calendarView;
-    });
-    new Promise(() => {
-      setTimeout(() => {
-        this.activateView();
-      }, 1000);
-    });
-
-    // this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
-    // this.addRibbonIcon("dice", "Activate view", () => {
-    //   this.activateView();
-    // });
   }
 
 
   onunload() {
     // this.statusBarItemEl.remove()
-    this.removeView().then();
+    // this.removeView().then();
 
   }
 
@@ -117,15 +89,7 @@ export default class DailyStatisticsPlugin extends Plugin {
         "en"
       ]
     });
-    await this.calendarView.onClose();
-    await this.calendarView.onOpen();
-    this.addCommand({
-      id: "open-calendar",
-      name: this.t("打开日历面板", "Open calendar panel"),
-      callback: () => {
-        this.activateView();
-      }
-    });
+
   }
 
   // async activateView() {
@@ -153,14 +117,14 @@ export default class DailyStatisticsPlugin extends Plugin {
   // }
 
   // 移除视图
-  async removeView() {
-    const { workspace } = this.app;
-    const leaves = workspace.getLeavesOfType(Calendar_View);
-    if (leaves.length > 0) {
-      // A leaf with our view already exists, use that
-      workspace.detachLeavesOfType(Calendar_View);
-    }
-  }
+  // async removeView() {
+  //   const { workspace } = this.app;
+  //   const leaves = workspace.getLeavesOfType(Calendar_View);
+  //   if (leaves.length > 0) {
+  //     // A leaf with our view already exists, use that
+  //     workspace.detachLeavesOfType(Calendar_View);
+  //   }
+  // }
 
 
   async loadSettings() {
