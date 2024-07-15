@@ -9,18 +9,19 @@ import path from "path";
 import fs from "fs/promises";
 import manifest from "./manifest.json";
 
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
+
 const env = dotenv.config();
 dotenvExpand.expand(env);
 
 const isWatch = process.argv.includes("--watch");
 
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
   return {
     plugins: [
       vue(),
@@ -35,6 +36,9 @@ export default defineConfig(({ command }) => {
             );
             return;
           }
+          if (process.env.NODE_ENV === 'development') {
+            // 开发环境特有的配置
+          }
           const dist = process.env.OB_PLUGIN_DIST + manifest.id + "-dev";
 
           await fs.mkdir(dist, { recursive: true });
@@ -47,36 +51,36 @@ export default defineConfig(({ command }) => {
           await Promise.all([
             await copy("./main.js", dist),
             await copy("./styles.css", dist),
-            await copy("./manifest.json", dist),
+            await copy("./manifest.json", dist)
             // await copy("./.hotreload", dist)
           ]);
           console.log("复制结果到", dist);
-        },
+        }
 
       },
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver()]
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
-      }),
+        resolvers: [ElementPlusResolver()]
+      })
     ],
     build: {
       target: "esnext",
       sourcemap: isWatch ? "inline" : false,
       commonjsOptions: {
-        ignoreTryCatch: false,
+        ignoreTryCatch: false
       },
       lib: {
         entry: fileURLToPath(new URL("./src/Index.ts", import.meta.url)),
-        formats: ["cjs"],
+        formats: ["cjs"]
       },
       css: {},
       rollupOptions: {
         output: {
           entryFileNames: "main.js",
           assetFileNames: "styles.css",
-          exports: "named",
+          exports: "named"
         },
         external: [
           "obsidian",

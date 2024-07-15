@@ -17,6 +17,7 @@ export class DailyStatisticsDataManager {
   file!: TFile | null;
   today!: string;
   currentWordCount!: number;
+  dataSaveListeners: DailyStatisticsDataSaveListener[] = [];
 
   app: App;
   data: DailyStatisticsData;
@@ -43,8 +44,8 @@ export class DailyStatisticsDataManager {
       // 移除配置相关的属性
       this.removeProperties(this.data, new DailyStatisticsSettings());
     } else {
-      // 循环三次
-      for (let i = 0; i < 3; i++) {
+      // 循环5次
+      for (let i = 0; i < 5; i++) {
         this.file = this.app.vault.getFileByPath(this.filePath);
         if (this.file != null) {
           console.info("dataFile ready");
@@ -88,41 +89,16 @@ export class DailyStatisticsDataManager {
     });
   }
 
-  //
-  // /**
-  //  *  判断文件是否存在
-  //  * @param path
-  //  */
-  // fileExists(path: string) {
-  // 	try {
-  // 		fs.accessSync(path, fs.constants.F_OK);
-  // 		return true
-  // 	} catch (_) {
-  // 		console.info("file not exists:" + path)
-  // 	}
-  // 	return false
-  // }
-  //
-  // async readFile(path: string) {
-  // 	try {
-  // 		this.data = new DailyStatisticsData()
-  // 		if (!this.fileExists(path)) {
-  // 			await fs.promises.writeFile(path, JSON.stringify(this.data), 'utf8');
-  // 		} else {
-  // 			this.data = JSON.parse(await fs.promises.readFile(path, 'utf8'));
-  // 		}
-  // 	} catch (error) {
-  // 		console.error('读取文件出错：', error);
-  // 	}
-  // }
-  //
-  // async writeFile(path: string) {
-  // 	try {
-  // 		await fs.promises.writeFile(path, JSON.stringify(this.data), 'utf8');
-  // 	} catch (error) {
-  // 		console.error('写文件出错：', error);
-  // 	}
-  // }
+  addDataSaveListener(listener: DailyStatisticsDataSaveListener) {
+    this.dataSaveListeners.push(listener);
+  }
+
+  // 移除数据监听器
+  removeDataSaveListener(listener: DailyStatisticsDataSaveListener) {
+    this.dataSaveListeners = this.dataSaveListeners.filter(
+      (item) => item.getListenerId() !== listener.getListenerId()
+    );
+  }
 
   // 保存数据
   async saveStatisticsData() {
@@ -149,6 +125,18 @@ export class DailyStatisticsDataManager {
         Object.assign(data, this.data);
         await this.plugin.saveData(data);
       }
+
+      // 异步执行监听器
+      new Promise(() => {
+        for (const listener of this.dataSaveListeners) {
+          try {
+            listener.onSave(this.data);
+            // console.info("dataSaveListener 执行完成, listenerId is " + listener.getListenerId());
+          } catch (error) {
+            console.error("dataSaveListeners, 执行异常, listenerId is " + listener.getListenerId(), error);
+          }
+        }
+      });
     } catch (error) {
       console.error("保存统计数据出错：", error);
     }
@@ -176,9 +164,7 @@ export class DailyStatisticsDataManager {
       this.data.todayWordCount[filepath] = { initial: curr, current: curr };
     }
     this.updateCounts();
-    this.saveStatisticsData().then(r => {
-      console.info("saveStatisticsData, save data");
-    });
+
 
   }
 
@@ -192,17 +178,18 @@ export class DailyStatisticsDataManager {
       .map((wordCount) => Math.max(0, wordCount.current - wordCount.initial))
       .reduce((a, b) => a + b, 0);
     this.data.dayCounts[this.today] = this.currentWordCount;
+
+    this.saveStatisticsData().then();
   }
 
 
-  // // 获取指定月份的数据
-  // getByMonth(month: string) {
-  //   const monthData: Record<string, number> = {};
-  //   for (const date in this.data.dayCounts) {
-  //     if (date.startsWith(month)) {
-  //       monthData[date] = this.data.dayCounts[date];
-  //     }
-  //   }
-  //   return monthData;
-  // }
+}
+
+/**
+ * 保存数据监听
+ */
+export interface DailyStatisticsDataSaveListener {
+  onSave(data: DailyStatisticsData): void;
+
+  getListenerId(): string;
 }

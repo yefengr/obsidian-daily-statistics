@@ -9,26 +9,22 @@ import {
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
+import i18n, { type I18n } from "simplest-i18n";
 
 
 /**
  * 插件核心类
  */
-export default class MyPlugin extends Plugin {
+export default class DailyStatisticsPlugin extends Plugin {
   settings!: DailyStatisticsSettings;
   statisticsDataManager!: DailyStatisticsDataManager;
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;
   private statusBarItemEl!: HTMLElement;
+  t!: I18n;
+  calendarView!: CalendarView;
 
   async onload() {
     await this.loadSettings();
-
-
-    // 因为可能出现文件还未加载到库中的情况，导致加载数据失败。
-    // await new Promise((resolve) => setTimeout(resolve, 6 * 1000));
-
-    // 异步执行操作
-    new Promise((resolve) => setTimeout(resolve, 6 * 1000));
 
 
     this.statisticsDataManager = new DailyStatisticsDataManager(
@@ -36,7 +32,7 @@ export default class MyPlugin extends Plugin {
       this.app,
       this
     );
-    this.statisticsDataManager.loadStatisticsData().then(r => {
+    this.statisticsDataManager.loadStatisticsData().then(() => {
       console.info("loadStatisticsData success. ");
     });
     this.debouncedUpdate = debounce(
@@ -59,14 +55,24 @@ export default class MyPlugin extends Plugin {
       false
     );
 
+    this.t = i18n({
+      locale: this.settings.language,
+      locales: [
+        "zh-cn",
+        "en"
+      ]
+    });
+
     // 定时在的状态栏更新本日字数
     this.statusBarItemEl = this.addStatusBarItem();
     // statusBarItemEl.setText('Status Bar Text');
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarItemEl.setText(
-          this.statisticsDataManager.currentWordCount + " words today "
-        );
+          this.t("今日字数：", "Today's word count: ") +
+          this.statisticsDataManager.currentWordCount
+        )
+        ;
       }, 1000)
     );
 
@@ -74,17 +80,19 @@ export default class MyPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("quick-preview", this.onQuickPreview.bind(this))
     );
-    //
-    // // 定时保存数据
-    // this.registerInterval(
-    //   window.setInterval(() => {
-    //     this.statisticsDataManager.saveStatisticsData();
-    //   }, 1000)
-    // );
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
-    // this.addSettingTab(new SampleSettingTab2(this.app, this));
+
+    this.registerView(Calendar_View, (leaf) => {
+      this.calendarView = new CalendarView(leaf, this);
+      return this.calendarView;
+    });
+    new Promise(() => {
+      setTimeout(() => {
+        this.activateView();
+      }, 1000);
+    });
 
     // this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf, this));
     // this.addRibbonIcon("dice", "Activate view", () => {
@@ -92,7 +100,32 @@ export default class MyPlugin extends Plugin {
     // });
   }
 
+
   onunload() {
+    // this.statusBarItemEl.remove()
+    this.removeView().then();
+
+  }
+
+
+  // 重新加载
+  async languageChange() {
+    this.t = i18n({
+      locale: this.settings.language,
+      locales: [
+        "zh-cn",
+        "en"
+      ]
+    });
+    await this.calendarView.onClose();
+    await this.calendarView.onOpen();
+    this.addCommand({
+      id: "open-calendar",
+      name: this.t("打开日历面板", "Open calendar panel"),
+      callback: () => {
+        this.activateView();
+      }
+    });
   }
 
   // async activateView() {
@@ -119,6 +152,17 @@ export default class MyPlugin extends Plugin {
   //   workspace.revealLeaf(leaf);
   // }
 
+  // 移除视图
+  async removeView() {
+    const { workspace } = this.app;
+    const leaves = workspace.getLeavesOfType(Calendar_View);
+    if (leaves.length > 0) {
+      // A leaf with our view already exists, use that
+      workspace.detachLeavesOfType(Calendar_View);
+    }
+  }
+
+
   async loadSettings() {
     this.settings = Object.assign(
       {},
@@ -130,7 +174,10 @@ export default class MyPlugin extends Plugin {
   // 保存配置文件
   async saveSettings() {
     // 先获取最新的数据，再将新的配置保存进去
-    const data = await this.loadData();
+    let data = await this.loadData();
+    if (data == null) {
+      data = new DailyStatisticsSettings();
+    }
     Object.assign(data, this.settings);
     await this.saveData(data);
   }
@@ -142,4 +189,6 @@ export default class MyPlugin extends Plugin {
     }
   }
 }
+
+
 
