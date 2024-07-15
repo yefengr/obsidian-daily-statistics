@@ -7,9 +7,12 @@ import {
   type WorkspaceLeaf
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
-import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
+import { DailyStatisticsDataManager, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
+// import i18nT from "@/i18nT";
+// import i18nT from "i18nT.ts";
+// import i18n from 'simplest-i18n';
 
 
 /**
@@ -23,6 +26,7 @@ export default class DailyStatisticsPlugin extends Plugin {
 
   async onload() {
     await this.loadSettings();
+
 
     this.statisticsDataManager = new DailyStatisticsDataManager(
       this.settings.dataFile,
@@ -89,6 +93,15 @@ export default class DailyStatisticsPlugin extends Plugin {
   }
 
   onunload() {
+    // this.statusBarItemEl.remove()
+
+  }
+
+
+  // 重新加载
+  async reloadView() {
+    await this.removeView();
+    await this.activateView();
   }
 
   async activateView() {
@@ -114,6 +127,17 @@ export default class DailyStatisticsPlugin extends Plugin {
     // "Reveal" the leaf in case it is in a collapsed sidebar
     workspace.revealLeaf(leaf);
   }
+
+  // 移除视图
+  async removeView() {
+    const { workspace } = this.app;
+    const leaves = workspace.getLeavesOfType(Calendar_View);
+    if (leaves.length > 0) {
+      // A leaf with our view already exists, use that
+      workspace.detachLeavesOfType(Calendar_View);
+    }
+  }
+
 
   async loadSettings() {
     this.settings = Object.assign(
@@ -141,4 +165,6 @@ export default class DailyStatisticsPlugin extends Plugin {
     }
   }
 }
+
+
 

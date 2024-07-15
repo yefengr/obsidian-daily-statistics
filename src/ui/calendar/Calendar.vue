@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :locale="zhCn">
+  <el-config-provider>
 
     <el-calendar v-model="day">
       <template #date-cell="{ data }">
@@ -27,15 +27,25 @@
 
     <div class="progress">
       <p>
-        每日目标： {{ targetWordContOfDay }}
+        {{ $t(
+        "每日目标：",
+        "Daily goals: "
+      ) }}{{ targetWordContOfDay }}
       </p>
       <el-progress :percentage="dayProgress" :status="dayProgress>=100 ?'success':''" />
       <p>
-        每周目标：{{ targetWordContOfDay * 7 }}
+        {{ $t(
+        "每周目标：",
+        "Weekly goals: "
+      ) }}
+        {{ targetWordContOfDay * 7 }}
       </p>
       <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
       <p>
-        每月目标：{{ targetWordContOfDay * dayCountOfMonth }}
+        {{ $t(
+        "每月目标：",
+        "Monthly goals: "
+      ) }}{{ targetWordContOfDay * dayCountOfMonth }}
         <!--        , 本月：{{ dayCountOfMonth }}天。-->
       </p>
       <el-progress :percentage="monthProgress" :status="monthProgress>=100 ?'success':''" />
@@ -49,13 +59,15 @@
 import "element-plus/theme-chalk/dark/css-vars.css";
 // 国际化¬
 import { ElConfigProvider } from "element-plus";
-import zhCn from "element-plus/es/locale/lang/zh-cn";
+// import zhCn from "element-plus/es/locale/lang/zh-cn";
 import store from "@/data/Store";
 import { computed } from "vue";
 import { ref, watch } from "vue";
 
+
 import { useDark, useToggle } from "@vueuse/core";
 import moment from "moment/moment";
+
 
 // 获取当前主题模式
 const isDark = useDark();

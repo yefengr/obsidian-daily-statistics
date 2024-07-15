@@ -5,6 +5,10 @@ import store from "@/data/Store";
 import DailyStatisticsPlugin from "@/Index";
 import moment from "moment";
 import { DailyStatisticsData, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
+import i18n from "simplest-i18n";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
+import en from "element-plus/es/locale/lang/en";
+import ElementPlus from "element-plus";
 
 
 export const Calendar_View = "CalendarView";
@@ -40,16 +44,29 @@ export class CalendarView extends ItemView {
     // console.info("CalendarView onOpen");
 
 
+
     // 初始化数据
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
     store.commit("updateStatisticsData", this.plugin.statisticsDataManager.data.dayCounts);
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
 
+
     // 创建并挂在组件
+    const t = i18n({
+      locale: this.plugin.settings.language,
+      locales: [
+        "zh-cn",
+        "en"
+      ]
+    });
     const _app = createApp(Calendar);
+    _app.config.globalProperties.$t = t;
     _app.use(store);
     _app.mount(this.containerEl);
+    _app.use(ElementPlus, {
+      locale: this.plugin.settings.language == "zh-cn" ? zhCn : en
+    });
     this._vueApp = _app;
 
     // 当有数据更新时，更新日历视图
