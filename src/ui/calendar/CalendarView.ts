@@ -37,20 +37,26 @@ export class CalendarView extends ItemView {
     return "calendar-with-checkmark";
   }
 
+
+  dailyStatisticsDataSaveListenerImpl = new class DailyStatisticsDataSaveListenerImpl
+    implements DailyStatisticsDataSaveListener {
+    onSave(data: DailyStatisticsData): void {
+      // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
+      store.commit("updateStatisticsData", data.dayCounts);
+    }
+
+    getListenerId(): string {
+      return "DailyStatisticsDataSaveListenerImpl-CalendarView";
+    }
+  };
+
   async onOpen() {
-    // const container = this.containerEl.children[1];
-    // container.empty();
-    // container.createEl("h4", { text: "Example view" });
-    // console.info("CalendarView onOpen");
-
-
 
     // 初始化数据
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
     store.commit("updateStatisticsData", this.plugin.statisticsDataManager.data.dayCounts);
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
-
 
     // 创建并挂在组件
     const t = i18n({
@@ -63,25 +69,15 @@ export class CalendarView extends ItemView {
     const _app = createApp(Calendar);
     _app.config.globalProperties.$t = t;
     _app.use(store);
-    _app.mount(this.containerEl);
     _app.use(ElementPlus, {
       locale: this.plugin.settings.language == "zh-cn" ? zhCn : en
     });
+    _app.mount(this.containerEl);
     this._vueApp = _app;
 
-    // 当有数据更新时，更新日历视图
-    this.plugin.statisticsDataManager.addDataSaveListener(new class DailyStatisticsDataSaveListenerImpl
-        implements DailyStatisticsDataSaveListener {
-        onSave(data: DailyStatisticsData): void {
-          // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
-          store.commit("updateStatisticsData", data.dayCounts);
-        }
 
-        getListenerId(): string {
-          return "DailyStatisticsDataSaveListenerImpl-CalendarView";
-        }
-      }
-    );
+    // 当有数据更新时，更新日历视图
+    this.plugin.statisticsDataManager.addDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
 
     const today = moment().format("YYYY-MM-DD");
     this.intervalId = setInterval(() => {
@@ -97,17 +93,20 @@ export class CalendarView extends ItemView {
   }
 
 
-  async onClose() {
 
+  async onClose() {
     // console.info("CalendarView onClose");
     if (this._vueApp) {
       this._vueApp.unmount();
     }
     this.containerEl.empty();
+
+    this.plugin.statisticsDataManager.removeDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null; // 重置定时器 ID
     }
+
   }
 
 }

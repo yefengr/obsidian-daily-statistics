@@ -39,7 +39,7 @@ export class SampleSettingTab extends PluginSettingTab {
             this.plugin.settings.language = value;
             await this.plugin.saveSettings();
             this.display();
-            await this.plugin.reloadView();
+            await this.plugin.languageChange();
           });
       });
 

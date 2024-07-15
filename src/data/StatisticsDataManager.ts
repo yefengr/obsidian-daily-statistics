@@ -93,6 +93,13 @@ export class DailyStatisticsDataManager {
     this.dataSaveListeners.push(listener);
   }
 
+  // 移除数据监听器
+  removeDataSaveListener(listener: DailyStatisticsDataSaveListener) {
+    this.dataSaveListeners = this.dataSaveListeners.filter(
+      (item) => item.getListenerId() !== listener.getListenerId()
+    );
+  }
+
   // 保存数据
   async saveStatisticsData() {
     try {

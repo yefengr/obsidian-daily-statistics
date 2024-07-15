@@ -10,9 +10,7 @@ import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManager, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
-// import i18nT from "@/i18nT";
-// import i18nT from "i18nT.ts";
-// import i18n from 'simplest-i18n';
+import i18n, { type I18n } from "simplest-i18n";
 
 
 /**
@@ -23,6 +21,8 @@ export default class DailyStatisticsPlugin extends Plugin {
   statisticsDataManager!: DailyStatisticsDataManager;
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;
   private statusBarItemEl!: HTMLElement;
+  t!: I18n;
+  calendarView!: CalendarView;
 
   async onload() {
     await this.loadSettings();
@@ -56,14 +56,24 @@ export default class DailyStatisticsPlugin extends Plugin {
       false
     );
 
+    this.t = i18n({
+      locale: this.settings.language,
+      locales: [
+        "zh-cn",
+        "en"
+      ]
+    });
+
     // 定时在的状态栏更新本日字数
     this.statusBarItemEl = this.addStatusBarItem();
     // statusBarItemEl.setText('Status Bar Text');
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarItemEl.setText(
-          this.statisticsDataManager.currentWordCount + " words today "
-        );
+          this.t("今日字数：", "Today's word count: ") +
+          this.statisticsDataManager.currentWordCount
+        )
+        ;
       }, 1000)
     );
 
@@ -75,33 +85,52 @@ export default class DailyStatisticsPlugin extends Plugin {
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
 
-    this.registerView(Calendar_View, (leaf) => new CalendarView(leaf, this));
+    this.registerView(Calendar_View, (leaf) => {
+      this.calendarView = new CalendarView(leaf, this);
+      return this.calendarView;
+    });
     new Promise(() => {
       setTimeout(() => {
         this.activateView();
-      }, 2000);
+      }, 1000);
     });
 
 
     this.addCommand({
-      id: "obsidian-daily-statistics-open-calendar",
-      name: "打开日历面板",
+      id: "open-calendar",
+      name: this.t("打开日历面板", "Open calendar panel"),
       callback: () => {
         this.activateView();
       }
     });
   }
 
+
   onunload() {
     // this.statusBarItemEl.remove()
+    this.removeView().then();
 
   }
 
 
   // 重新加载
-  async reloadView() {
-    await this.removeView();
-    await this.activateView();
+  async languageChange() {
+    this.t = i18n({
+      locale: this.settings.language,
+      locales: [
+        "zh-cn",
+        "en"
+      ]
+    });
+    await this.calendarView.onClose();
+    await this.calendarView.onOpen();
+    this.addCommand({
+      id: "open-calendar",
+      name: this.t("打开日历面板", "Open calendar panel"),
+      callback: () => {
+        this.activateView();
+      }
+    });
   }
 
   async activateView() {
