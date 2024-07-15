@@ -7,7 +7,7 @@ import {
   type WorkspaceLeaf
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
-import { DailyStatisticsDataManager, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
+import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 import i18n, { type I18n } from "simplest-i18n";
