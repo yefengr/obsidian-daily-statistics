@@ -4,11 +4,15 @@ import Calendar from "@/ui/calendar/Calendar.vue";
 import store from "@/data/Store";
 import DailyStatisticsPlugin from "@/Index";
 import moment from "moment";
-import { DailyStatisticsData, type DailyStatisticsDataSaveListener } from "@/data/StatisticsDataManager";
-import i18n from "simplest-i18n";
+import {
+  DailyStatisticsData,
+  DailyStatisticsDataManagerInstance,
+  type DailyStatisticsDataSaveListener
+} from "@/data/StatisticsDataManager";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import en from "element-plus/es/locale/lang/en";
 import ElementPlus from "element-plus";
+import { i18nG } from "@/globals";
 
 
 export const Calendar_View = "CalendarView";
@@ -55,19 +59,12 @@ export class CalendarView extends ItemView {
     // 初始化数据
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
-    store.commit("updateStatisticsData", this.plugin.statisticsDataManager.data.dayCounts);
+    store.commit("updateStatisticsData", DailyStatisticsDataManagerInstance.data.dayCounts);
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
 
     // 创建并挂在组件
-    const t = i18n({
-      locale: this.plugin.settings.language,
-      locales: [
-        "zh-cn",
-        "en"
-      ]
-    });
     const _app = createApp(Calendar);
-    _app.config.globalProperties.$t = t;
+    _app.config.globalProperties.$t = i18nG.instance;
     _app.use(store);
     _app.use(ElementPlus, {
       locale: this.plugin.settings.language == "zh-cn" ? zhCn : en
@@ -77,7 +74,7 @@ export class CalendarView extends ItemView {
 
 
     // 当有数据更新时，更新日历视图
-    this.plugin.statisticsDataManager.addDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
+    DailyStatisticsDataManagerInstance.addDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
 
     const today = moment().format("YYYY-MM-DD");
     this.intervalId = setInterval(() => {
@@ -101,7 +98,7 @@ export class CalendarView extends ItemView {
     }
     this.containerEl.empty();
 
-    this.plugin.statisticsDataManager.removeDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
+    DailyStatisticsDataManagerInstance.removeDataSaveListener(this.dailyStatisticsDataSaveListenerImpl);
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null; // 重置定时器 ID

@@ -7,10 +7,11 @@ import {
   type WorkspaceLeaf
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
-import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
+import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
-import i18n, { type I18n } from "simplest-i18n";
+import i18n from "simplest-i18n";
+import { i18nG } from "@/globals";
 
 
 /**
@@ -18,23 +19,33 @@ import i18n, { type I18n } from "simplest-i18n";
  */
 export default class DailyStatisticsPlugin extends Plugin {
   settings!: DailyStatisticsSettings;
-  statisticsDataManager!: DailyStatisticsDataManager;
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;
   private statusBarItemEl!: HTMLElement;
-  t!: I18n;
   calendarView!: CalendarView;
 
   async onload() {
+    // 然后在某个地方初始化 i18nInstance
+
+
     await this.loadSettings();
 
 
-    this.statisticsDataManager = new DailyStatisticsDataManager(
+    DailyStatisticsDataManagerInstance.init(
       this.settings.dataFile,
       this.app,
       this
     );
-    this.statisticsDataManager.loadStatisticsData().then(() => {
+    DailyStatisticsDataManagerInstance.loadStatisticsData().then(() => {
       console.info("loadStatisticsData success. ");
+      i18nG.instance = i18n({
+        locale: this.settings.language,
+        locales: [
+          "zh-cn",
+          "en"
+        ]
+      });
+
+
     });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
@@ -50,19 +61,12 @@ export default class DailyStatisticsPlugin extends Plugin {
             return;
           }
         }
-        this.statisticsDataManager.updateWordCount(contents, filepath);
+        DailyStatisticsDataManagerInstance.updateWordCount(contents, filepath);
       },
       400,
       false
     );
 
-    this.t = i18n({
-      locale: this.settings.language,
-      locales: [
-        "zh-cn",
-        "en"
-      ]
-    });
 
     // 定时在的状态栏更新本日字数
     this.statusBarItemEl = this.addStatusBarItem();
@@ -70,8 +74,8 @@ export default class DailyStatisticsPlugin extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarItemEl.setText(
-          this.t("今日字数：", "Today's word count: ") +
-          this.statisticsDataManager.currentWordCount
+          i18nG.instance("今日字数：", "Today's word count: ") +
+          DailyStatisticsDataManagerInstance.currentWordCount
         )
         ;
       }, 1000)
@@ -98,7 +102,7 @@ export default class DailyStatisticsPlugin extends Plugin {
 
     this.addCommand({
       id: "open-calendar",
-      name: this.t("打开日历面板", "Open calendar panel"),
+      name: i18nG.instance("打开日历面板", "Open calendar panel"),
       callback: () => {
         this.activateView();
       }
@@ -115,7 +119,7 @@ export default class DailyStatisticsPlugin extends Plugin {
 
   // 重新加载
   async languageChange() {
-    this.t = i18n({
+    i18nG.instance = i18n({
       locale: this.settings.language,
       locales: [
         "zh-cn",
@@ -126,7 +130,7 @@ export default class DailyStatisticsPlugin extends Plugin {
     await this.calendarView.onOpen();
     this.addCommand({
       id: "open-calendar",
-      name: this.t("打开日历面板", "Open calendar panel"),
+      name: i18nG.instance("打开日历面板", "Open calendar panel"),
       callback: () => {
         this.activateView();
       }

@@ -39,6 +39,7 @@
         "Weekly goals: "
       ) }}
         {{ targetWordContOfDay * 7 }}
+        <SetValue @child-event="handleChildEvent" />
       </p>
       <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
       <p>
@@ -67,6 +68,8 @@ import { ref, watch } from "vue";
 
 import { useDark, useToggle } from "@vueuse/core";
 import moment from "moment/moment";
+import SetValue from "@/ui/calendar/SetValue.vue";
+import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
 
 
 // 获取当前主题模式
@@ -147,6 +150,17 @@ const monthProgress = computed(() => {
   );
   return progress > 100 ? 100 : progress;
 });
+
+
+//========
+const handleChildEvent = (data: string) => {
+  console.info(data); // 接收来自子组件的数据
+  DailyStatisticsDataManagerInstance.data.weeklyPlan = {
+    "tset": data
+  };
+  console.info(DailyStatisticsDataManagerInstance.data.weeklyPlan);
+  DailyStatisticsDataManagerInstance.saveStatisticsData();
+};
 
 </script>
 
