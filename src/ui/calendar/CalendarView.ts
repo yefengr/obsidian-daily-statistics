@@ -34,7 +34,7 @@ export class CalendarView extends ItemView {
   }
 
   getDisplayText() {
-    return "Daily Statistics";
+    return "Daily statistics";
   }
 
   getIcon(): IconName {
