@@ -54,7 +54,7 @@ const props = defineProps(["defaultData"]);
 const defaultData = computed(() => props.defaultData || 0);
 const num = ref(defaultData.value);
 
-watch(defaultData, (newValue, oldValue) => {
+watch(defaultData, (newValue) => {
   num.value = newValue;
 });
 

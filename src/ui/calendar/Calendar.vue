@@ -90,7 +90,7 @@ import { useDark, useToggle } from "@vueuse/core";
 import moment from "moment/moment";
 import SetValue from "@/ui/calendar/SetValue.vue";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
-import { Edit, QuestionFilled, Warning } from "@element-plus/icons-vue";
+import { Warning } from "@element-plus/icons-vue";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
 import { i18nG } from "@/globals";
