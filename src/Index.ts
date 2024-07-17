@@ -114,7 +114,6 @@ export default class DailyStatisticsPlugin extends Plugin {
 
   onunload() {
     // this.statusBarItemEl.remove()
-    this.removeView().then();
 
   }
 
@@ -163,15 +162,7 @@ export default class DailyStatisticsPlugin extends Plugin {
     workspace.revealLeaf(leaf);
   }
 
-  // 移除视图
-  async removeView() {
-    const { workspace } = this.app;
-    const leaves = workspace.getLeavesOfType(Calendar_View);
-    if (leaves.length > 0) {
-      // A leaf with our view already exists, use that
-      workspace.detachLeavesOfType(Calendar_View);
-    }
-  }
+
 
 
   async loadSettings() {
