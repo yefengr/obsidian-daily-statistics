@@ -1,21 +1,29 @@
 <template>
-  <el-button plain @click="dialogVisible = true">
-    Click to open the Dialog
-  </el-button>
-
+<!--  <el-button :bg="false" :plain=true size="small" :icon="Edit" @click="dialogVisible = true" />-->
+  <el-icon id="edit-icon" ><Edit @click="dialogVisible = true" /></el-icon>
   <el-dialog
     v-model="dialogVisible"
     :title="title"
     :show-close=false
-    @closed="Close"
-    width="500">
+    width="300">
+
+    <template #default>
+      <el-input-number :controls="false" v-model="num" :min="7" :max="20000" />
+
+
+    </template>
 
 
     <template #footer>
 
-      <el-input-number v-model="num" :min="1" :max="10" @change="handleChange" />
       <div class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">
+        <el-button @click="dialogVisible = false">
+          {{ $t(
+          "取消",
+          "Cancel"
+        ) }}
+        </el-button>
+        <el-button @click="confirm">
           {{ $t(
           "确定",
           "Confirm"
@@ -27,41 +35,49 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import { computed, defineEmits, ref, watch } from "vue";
 import { i18nG } from "@/globals";
+import { useDark, useToggle } from "@vueuse/core";
 
+import { Edit } from "@element-plus/icons-vue";
+
+
+// 获取当前主题模式
+const isDark = useDark();
+useToggle(isDark);
+
+const emit = defineEmits(["setValue"]);
 const dialogVisible = ref(false);
-const num = ref(1);
-const handleChange = (value: number) => {
-  console.log(value);
-};
 
+const props = defineProps(["defaultData"]);
+const defaultData = computed(() => props.defaultData || 0);
+const num = ref(defaultData.value);
+
+watch(defaultData, (newValue, oldValue) => {
+  num.value = newValue;
+});
 
 const title = i18nG.instance(
   "设定目标",
   "Set a goal"
 );
 
-const Close = () => {
-  console.info("Close");
+const confirm = () => {
+  dialogVisible.value = false;
+  emit("setValue", num.value);
 };
 
-// const handleClose = (done: () => void) => {
-//   ElMessageBox.confirm("Are you sure to close this dialog?")
-//     .then(() => {
-//       done();
-//       emit("childEvent", childData.value);
-//     })
-//     .catch(() => {
-//       // catch error
-//     });
-// };
-
-const childData = ref("Data from child");
-const emit = defineEmits(["childEvent"]);
-
-// function handleClick() {
-//   emit('childEvent', childData.value);
-// }
 </script>
+
+<style>
+
+
+.el-icon{
+  margin-left: 6px;
+}
+
+/* 定义鼠标悬停时的样式 */
+#edit-icon:hover {
+  color: #1989fa;
+}
+</style>

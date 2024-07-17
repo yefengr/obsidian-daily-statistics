@@ -17,7 +17,7 @@
         </div>
         <div class="flex-centered3 ">
           <p>
-            {{ (monthCounts[data.day] || 0) > targetWordContOfDay ? "✔️" : "" }}
+            {{ ((monthCounts[data.day] || 0) > dailyGoals[data.day]) && dailyGoals[data.day] > 0 ? "✔️" : "" }}
           </p>
         </div>
       </template>
@@ -26,28 +26,48 @@
 
 
     <div class="progress">
-      <p>
+      <p class="goals">
         {{ $t(
         "每日目标：",
         "Daily goals: "
       ) }}{{ targetWordContOfDay }}
+        <el-tooltip
+          class="box-item"
+          :effect="tooltipEffi"
+          :content="dailyGoalsExplained"
+          placement="top"
+        >
+          <el-icon>
+            <Warning />
+          </el-icon>
+        </el-tooltip>
       </p>
       <el-progress :percentage="dayProgress" :status="dayProgress>=100 ?'success':''" />
-      <p>
+      <p class="goals">
         {{ $t(
         "每周目标：",
         "Weekly goals: "
       ) }}
-        {{ targetWordContOfDay * 7 }}
-        <SetValue @child-event="handleChildEvent" />
+        {{ targetWordContOfWeek }}
+        <SetValue @set-value="weekGoalChange" :default-data="targetWordContOfWeek" />
+
       </p>
       <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
-      <p>
+      <p class="goals">
         {{ $t(
         "每月目标：",
         "Monthly goals: "
       ) }}{{ targetWordContOfDay * dayCountOfMonth }}
-        <!--        , 本月：{{ dayCountOfMonth }}天。-->
+        <el-tooltip
+          class="box-item"
+          :effect="tooltipEffi"
+          :content="weekGoalsExplained"
+          placement="top"
+        >
+          <el-icon>
+            <Warning />
+          </el-icon>
+        </el-tooltip>
       </p>
       <el-progress :percentage="monthProgress" :status="monthProgress>=100 ?'success':''" />
     </div>
@@ -60,21 +80,23 @@
 import "element-plus/theme-chalk/dark/css-vars.css";
 // 国际化¬
 import { ElConfigProvider } from "element-plus";
-// import zhCn from "element-plus/es/locale/lang/zh-cn";
 import store from "@/data/Store";
-import { computed } from "vue";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import "element-plus/dist/index.css";
 
 
 import { useDark, useToggle } from "@vueuse/core";
 import moment from "moment/moment";
 import SetValue from "@/ui/calendar/SetValue.vue";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
+import { Edit, QuestionFilled, Warning } from "@element-plus/icons-vue";
+import { i18nG } from "@/globals";
 
 
 // 获取当前主题模式
 const isDark = useDark();
 useToggle(isDark);
+let tooltipEffi = isDark ? "light" : "dark";
 
 // 日期
 const day = ref(new Date());
@@ -96,28 +118,109 @@ watch(day, (newValue) => {
 });
 
 
-//==============
-// 进度条
+//======== 计划目标变更
 
-// 目标字数
+const weekGoalChangeFlag = ref(1);
+const weekGoalChange = (data: number) => {
+  console.info("weekGoalChange, data is ", data);
+  const weekCount = moment(day.value).week();
+  const year = moment(day.value).format("YYYY");
+  const yearWeek = year + "_" + weekCount;
+  console.info(data); // 接收来自子组件的数据
+  DailyStatisticsDataManagerInstance.data.weeklyPlan[yearWeek] = data;
+  DailyStatisticsDataManagerInstance.saveStatisticsData();
+  weekGoalChangeFlag.value++;
+};
+
+let currentMon = ref(moment(day.value).format("YYYY-MM"));
+// 通过周计划，计算出每日目标与每月目标
+// 先获取当前月份，然后获取当前月份起始日期he
+watch(day, (newValue) => {
+  const newMon = moment(newValue).format("YYYY-MM");
+  if (currentMon.value != newMon) {
+    currentMon.value = newMon;
+  }
+});
+
+const dailyGoals = computed(() => {
+  console.info("dailyGoals computed");
+  if (weekGoalChangeFlag.value > 0) {
+    console.info("weekGoalChangeFlag is " + weekGoalChangeFlag.value);
+  }
+  let dailyGoals: Record<string, number> = {};
+  // 获取上一个月的第一天
+  const prevMonthStart = moment(currentMon.value).subtract(1, "month").startOf("month").dayOfYear();
+  // 获取下一月的最后一天
+  const nextMonthEnd = moment(currentMon.value).add(1, "month").endOf("month").dayOfYear();
+  // 找出之间每一天的周数，然后计算每日目标
+  for (let i = prevMonthStart; i <= nextMonthEnd; i++) {
+    const date = moment().dayOfYear(i);
+    let weekCount = date.week();
+    const number = getGoalOfWeek(date.format("YYYY"), weekCount);
+    dailyGoals[date.format("YYYY-MM-DD")] = Math.floor(number / 7);
+  }
+  console.info("dailyGoals", dailyGoals);
+  return dailyGoals;
+});
+
+// 获取每周的目标，如果当前周不存在目标，则获取上一周的目标，直至找到目标。如果本年度都没有设置目标，则返回 0
+function getGoalOfWeek(year: string, weekCount: number) {
+  if (weekCount <= 0) {
+    return 0;
+  }
+  const number = DailyStatisticsDataManagerInstance.data.weeklyPlan[year + "_" + weekCount];
+  if (number != undefined) {
+    return number;
+  }
+  // 获取上一周的目标，
+  return getGoalOfWeek(year, weekCount - 1);
+}
+
+
+const dailyGoalsExplained = i18nG.instance(
+  "每日目标 = 每周目标 / 7",
+  "Daily Goal = Weekly Goal / 7"
+);
+
+const weekGoalsExplained = i18nG.instance(
+  "每月目标 = 每日目标 * 当月天数",
+  "Monthly Goal = Daily Goal * Days in the Month"
+);
+
+// 本日目标
 const targetWordContOfDay = computed(() => {
-  return store.getters.targetWordCont;
+  // console.info("targetWordContOfDay computed");
+  return dailyGoals.value[moment(day.value).format("YYYY-MM-DD")] || 0;
+});
+
+// 本周目标
+const targetWordContOfWeek = computed(() => {
+  console.info("targetWordContOfWeek computed");
+  return targetWordContOfDay.value * 7;
 });
 
 // 获取指定月份的总天数
 const dayCountOfMonth = computed(() => {
-  return moment(store.getters.month).daysInMonth();
+  return moment(currentMon.value).daysInMonth();
 });
+
+
+//==============
+// 进度条
 
 // 每日进度
 const dayProgress = computed(() => {
+  console.info("dayProgress computed, targetWordContOfDay is " + targetWordContOfDay.value);
   const today = moment(day.value).format("YYYY-MM-DD");
   const dayCount = monthCounts.value[today] || 0;
+  if (dayCount == 0 || targetWordContOfDay.value == 0) {
+    return 0;
+  }
   let progress = Math.floor(dayCount / targetWordContOfDay.value * 100);
   return progress > 100 ? 100 : progress;
 });
 
-// 本周目标
+// 本周进度
 const weekProgress = computed(() => {
   const today = moment(day.value).format("YYYY-MM-DD");
   // 获取本周的总字数
@@ -131,12 +234,16 @@ const weekProgress = computed(() => {
     return acc;
   }, 0);
   // console.info("weekCount", weekCount);
-  const progress = Math.floor((weekCount / (targetWordContOfDay.value * 7)) * 100);
+  const weekGoal = targetWordContOfDay.value * 7;
+  if (weekCount == 0 || weekGoal == 0) {
+    return 0;
+  }
+  const progress = Math.floor((weekCount / weekGoal) * 100);
   // console.info("weekCount progress", progress);
   return progress > 100 ? 100 : progress;
 });
 
-// 本月目标
+// 本月进度
 const monthProgress = computed(() => {
   const today = moment(day.value).format("YYYY-MM-DD");
   const monthCount = Object.keys(monthCounts.value).reduce((acc, key) => {
@@ -146,21 +253,15 @@ const monthProgress = computed(() => {
     }
     return acc;
   }, 0);
-  const progress = Math.floor((monthCount / (targetWordContOfDay.value * dayCountOfMonth.value)) * 100
+  const monthGoal = targetWordContOfDay.value * dayCountOfMonth.value;
+  if (monthCount == 0 || monthGoal == 0) {
+    return 0;
+  }
+  const progress = Math.floor((monthCount / monthGoal) * 100
   );
   return progress > 100 ? 100 : progress;
 });
 
-
-//========
-const handleChildEvent = (data: string) => {
-  console.info(data); // 接收来自子组件的数据
-  DailyStatisticsDataManagerInstance.data.weeklyPlan = {
-    "tset": data
-  };
-  console.info(DailyStatisticsDataManagerInstance.data.weeklyPlan);
-  DailyStatisticsDataManagerInstance.saveStatisticsData();
-};
 
 </script>
 
@@ -196,5 +297,17 @@ const handleChildEvent = (data: string) => {
 
 .progress {
   margin: 20px;
+}
+
+
+.goals {
+  /*让子项居中*/
+  display: flex;
+  align-items: center;
+}
+
+.el-icon {
+  margin-left: 6px;
+  margin-right: 6px;
 }
 </style>

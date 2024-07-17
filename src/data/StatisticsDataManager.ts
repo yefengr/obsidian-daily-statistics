@@ -11,7 +11,7 @@ export class DailyStatisticsData {
   dayCounts: Record<string, number> = {};
   todayWordCount: Record<string, WordCount> = {};
   // 每周计划
-  weeklyPlan: Record<string, string> = {};
+  weeklyPlan: Record<string, number> = {};
 }
 
 export class DailyStatisticsDataManager {

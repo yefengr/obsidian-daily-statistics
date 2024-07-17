@@ -13,6 +13,7 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
+
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 
@@ -36,7 +37,7 @@ export default defineConfig(() => {
             );
             return;
           }
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === "development") {
             // 开发环境特有的配置
           }
           const dist = process.env.OB_PLUGIN_DIST + manifest.id + "-dev";
