@@ -5,9 +5,12 @@ import {
   Plugin,
   TFile} from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
+import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
+import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
-import i18n, { type I18n } from "simplest-i18n";
+import i18n from "simplest-i18n";
+import { i18nG } from "@/globals";
 
 
 /**
@@ -15,22 +18,33 @@ import i18n, { type I18n } from "simplest-i18n";
  */
 export default class DailyStatisticsPlugin extends Plugin {
   settings!: DailyStatisticsSettings;
-  statisticsDataManager!: DailyStatisticsDataManager;
   debouncedUpdate!: Debouncer<[contents: string, filepath: string], void>;
   private statusBarItemEl!: HTMLElement;
-  t!: I18n;
+
 
   async onload() {
+    // 然后在某个地方初始化 i18nInstance
+
+
     await this.loadSettings();
 
 
-    this.statisticsDataManager = new DailyStatisticsDataManager(
+    DailyStatisticsDataManagerInstance.init(
       this.settings.dataFile,
       this.app,
       this
     );
-    this.statisticsDataManager.loadStatisticsData().then(() => {
+    DailyStatisticsDataManagerInstance.loadStatisticsData().then(() => {
       console.info("loadStatisticsData success. ");
+      i18nG.instance = i18n({
+        locale: this.settings.language,
+        locales: [
+          "zh-cn",
+          "en"
+        ]
+      });
+
+
     });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
@@ -46,19 +60,12 @@ export default class DailyStatisticsPlugin extends Plugin {
             return;
           }
         }
-        this.statisticsDataManager.updateWordCount(contents, filepath);
+        DailyStatisticsDataManagerInstance.updateWordCount(contents, filepath);
       },
       400,
       false
     );
 
-    this.t = i18n({
-      locale: this.settings.language,
-      locales: [
-        "zh-cn",
-        "en"
-      ]
-    });
 
 
 
@@ -82,7 +89,7 @@ export default class DailyStatisticsPlugin extends Plugin {
 
   // 重新加载
   async languageChange() {
-    this.t = i18n({
+    i18nG.instance = i18n({
       locale: this.settings.language,
       locales: [
         "zh-cn",

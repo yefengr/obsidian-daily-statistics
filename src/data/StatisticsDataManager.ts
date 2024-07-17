@@ -10,6 +10,8 @@ export interface WordCount {
 export class DailyStatisticsData {
   dayCounts: Record<string, number> = {};
   todayWordCount: Record<string, WordCount> = {};
+  // 每周计划
+  weeklyPlan: Record<string, number> = {};
 }
 
 export class DailyStatisticsDataManager {
@@ -19,16 +21,19 @@ export class DailyStatisticsDataManager {
   currentWordCount!: number;
   dataSaveListeners: DailyStatisticsDataSaveListener[] = [];
 
-  app: App;
+  app!: App;
   data: DailyStatisticsData;
-  plugin: Plugin;
+  plugin!: Plugin;
 
-  constructor(dataFile: string, app: App, plugin: Plugin) {
+  constructor() {
+    // 给一个默认值，避免出错
+    this.data = new DailyStatisticsData();
+  }
+
+  init(dataFile: string, app: App, plugin: Plugin) {
     this.filePath = dataFile;
     this.app = app;
     this.plugin = plugin;
-    // 给一个默认值，避免出错
-    this.data = new DailyStatisticsData();
   }
 
   // 加载数据
@@ -193,3 +198,5 @@ export interface DailyStatisticsDataSaveListener {
 
   getListenerId(): string;
 }
+
+export const DailyStatisticsDataManagerInstance: DailyStatisticsDataManager = new DailyStatisticsDataManager();

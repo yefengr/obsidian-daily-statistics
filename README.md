@@ -1,10 +1,12 @@
-# obsidian-vue-starter
+# Obsidian Daily Statistics
 
 ## 介绍
 统计每日书写的字数，并展示在日历中。
 
 ![img.png](img.png)
 
+
+移动端：[obsidian-daily-statistics-mobile](https://github.com/yefengr/obsidian-daily-statistics-mobile)
 
 ## 功能
 - [x] 统计每日字数

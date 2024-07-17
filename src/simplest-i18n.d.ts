@@ -11,3 +11,6 @@ declare module "simplest-i18n" {
 
   export default function i18n(config: I18nConfig): I18n;
 }
+
+
+
