@@ -1,7 +1,7 @@
 {
   "id": "daily-statistics",
   "name": "Daily Statistics",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "minAppVersion": "0.120",
   "description": "Count the number of words written each day and display it on a calendar.",
   "author": "yefengr",
