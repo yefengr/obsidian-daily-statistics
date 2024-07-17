@@ -38,7 +38,7 @@ export class DailyStatisticsDataManager {
 
   // 加载数据
   async loadStatisticsData() {
-    console.info("loadStatisticsData, dataFile is " + this.filePath);
+    // console.info("loadStatisticsData, dataFile is " + this.filePath);
 
     // 如果配置文件为空，则从默认的设置中加载杜
     if (this.filePath == null || this.filePath == "") {
@@ -53,22 +53,25 @@ export class DailyStatisticsDataManager {
       for (let i = 0; i < 5; i++) {
         this.file = this.app.vault.getFileByPath(this.filePath);
         if (this.file != null) {
-          console.info("dataFile ready");
+          // console.info("dataFile ready");
           break;
         }
-        console.info("waiting for dataFile…… ");
+        // console.info("waiting for dataFile…… ");
         // 等待3秒
         await new Promise((resolve) => setTimeout(resolve, 3000));
       }
       this.file = this.app.vault.getFileByPath(this.filePath);
       if (this.file == null) {
-        console.info("create dataFile " + this.filePath);
+        // console.info("create dataFile " + this.filePath);
         this.file = await this.app.vault.create(
           this.filePath,
           JSON.stringify(new DailyStatisticsData())
         );
       }
-      this.data = JSON.parse(await this.app.vault.read(this.file));
+      this.data = Object.assign(
+        new DailyStatisticsData(),
+        await JSON.parse(await this.app.vault.read(this.file))
+      );
     }
 
     this.updateDate();
@@ -108,11 +111,11 @@ export class DailyStatisticsDataManager {
   // 保存数据
   async saveStatisticsData() {
     try {
-      // console.info("saveStatisticsData…………");
+      // // console.info("saveStatisticsData…………");
 
       this.updateDate();
       if (this.filePath != null && this.filePath != "") {
-        // console.info("saveStatisticsData, dataFile is " + this.filePath);
+        // // console.info("saveStatisticsData, dataFile is " + this.filePath);
         if (this.file == null) {
           this.file = await this.app.vault.create(
             this.filePath,
@@ -121,9 +124,9 @@ export class DailyStatisticsDataManager {
         }
         await this.app.vault.modify(this.file, JSON.stringify(this.data));
       } else {
-        // console.info("saveStatisticsData, save data in setting");
+        // // console.info("saveStatisticsData, save data in setting");
         let data = await this.plugin.loadData();
-        // console.info("saveStatisticsData, data is " + JSON.stringify(data));
+        // // console.info("saveStatisticsData, data is " + JSON.stringify(data));
         if (data == null) {
           data = {};
         }
@@ -136,7 +139,7 @@ export class DailyStatisticsDataManager {
         for (const listener of this.dataSaveListeners) {
           try {
             listener.onSave(this.data);
-            // console.info("dataSaveListener 执行完成, listenerId is " + listener.getListenerId());
+            // // console.info("dataSaveListener 执行完成, listenerId is " + listener.getListenerId());
           } catch (error) {
             console.error("dataSaveListeners, 执行异常, listenerId is " + listener.getListenerId(), error);
           }
@@ -175,7 +178,7 @@ export class DailyStatisticsDataManager {
 
   updateDate() {
     this.today = moment().format("YYYY-MM-DD");
-    // console.info("updateDate, today is " + this.today)
+    // // console.info("updateDate, today is " + this.today)
   }
 
   updateCounts() {
