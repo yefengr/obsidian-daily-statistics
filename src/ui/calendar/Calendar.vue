@@ -83,7 +83,7 @@
 // 国际化¬
 import { ElConfigProvider } from "element-plus";
 import store from "@/data/Store";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onBeforeUnmount } from "vue";
 
 
 import { useDark, useToggle } from "@vueuse/core";
@@ -115,6 +115,11 @@ const observer = new MutationObserver((mutations) => {
 const config = { attributes: true, attributeFilter: ["class"] };
 // 观察body元素
 observer.observe(document.body, config);
+onBeforeUnmount(() => {
+  console.info('组件即将销毁');
+  observer.disconnect();
+  // 执行一些清理工作，比如取消网络请求、移除事件监听器等
+});
 
 // 日期
 const day = ref(new Date());
