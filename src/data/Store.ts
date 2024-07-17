@@ -26,7 +26,7 @@ const store = createStore<StatisticsData>({
 
     // 返回当前月份与前后各一个月的数据
     dayCounts(state) {
-      // console.info("getByMonth", state.month, state.dayCounts);
+      // // console.info("getByMonth", state.month, state.dayCounts);
       // return state.dayCounts;
 
       // 获取指定月份的上一月和下一月
@@ -39,7 +39,7 @@ const store = createStore<StatisticsData>({
           monthData[date] = state.dayCounts[date];
         }
       }
-      // console.info("getByMonth", state.month, monthData);
+      // // console.info("getByMonth", state.month, monthData);
       return monthData;
     },
 
@@ -57,7 +57,7 @@ const store = createStore<StatisticsData>({
 
     updateStatisticsData(state, dayCounts: Record<string, number>) {
       state.dayCounts = { ...dayCounts };
-      // console.info("updateStatisticsData:", state.dayCounts);
+      // // console.info("updateStatisticsData:", state.dayCounts);
     },
 
     updateTargetWordCont(state, targetWordCont: number) {

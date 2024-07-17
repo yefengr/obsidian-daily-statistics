@@ -45,7 +45,7 @@ export class CalendarView extends ItemView {
   dailyStatisticsDataSaveListenerImpl = new class DailyStatisticsDataSaveListenerImpl
     implements DailyStatisticsDataSaveListener {
     onSave(data: DailyStatisticsData): void {
-      // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
+      // // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
       store.commit("updateStatisticsData", data.dayCounts);
     }
 
@@ -79,10 +79,10 @@ export class CalendarView extends ItemView {
 
     const today = moment().format("YYYY-MM-DD");
     this.intervalId = setInterval(() => {
-      console.info("检查日期是否为当天……");
+      // console.info("检查日期是否为当天……");
       // 检查日期是否为当天，如果不是，则重新创建视图
       if (moment().format("YYYY-MM-DD") !== today) {
-        console.info("日期更新，重置视图");
+        // console.info("日期更新，重置视图");
         this.onClose();
         this.onOpen();
       }
@@ -93,7 +93,7 @@ export class CalendarView extends ItemView {
 
 
   async onClose() {
-    // console.info("CalendarView onClose");
+    // // console.info("CalendarView onClose");
     if (this._vueApp) {
       this._vueApp.unmount();
     }

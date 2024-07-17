@@ -107,7 +107,7 @@ const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.type === "attributes" && mutation.attributeName === "class") {
       isDark.value = document.body.classList.contains("theme-dark");
-      console.log("Is dark theme active?", isDark);
+      // console.log("Is dark theme active?", isDark);
     }
   });
 });
@@ -116,7 +116,7 @@ const config = { attributes: true, attributeFilter: ["class"] };
 // 观察body元素
 observer.observe(document.body, config);
 onBeforeUnmount(() => {
-  console.info('组件即将销毁');
+  // console.info('组件即将销毁');
   observer.disconnect();
   // 执行一些清理工作，比如取消网络请求、移除事件监听器等
 });
@@ -129,15 +129,15 @@ store.commit("updateMonth", yearMon);
 const monthCounts = computed(() => {
   return store.getters.dayCounts || {};
 });
-// console.info("monthCounts", monthCounts.value);
+// // console.info("monthCounts", monthCounts.value);
 
 
 watch(day, (newValue) => {
-  // console.info("newValue", newValue);
+  // // console.info("newValue", newValue);
   const yearMon = moment(newValue).format("YYYY-MM");
   store.commit("updateMonth", yearMon);
-  // console.info("monthCounts", monthCounts.value);
-  // console.info("monthCounts.value[2024-06-30]", monthCounts.value["2024-06-30"] ||0);
+  // // console.info("monthCounts", monthCounts.value);
+  // // console.info("monthCounts.value[2024-06-30]", monthCounts.value["2024-06-30"] ||0);
 });
 
 
@@ -145,11 +145,11 @@ watch(day, (newValue) => {
 
 const weekGoalChangeFlag = ref(1);
 const weekGoalChange = (data: number) => {
-  console.info("weekGoalChange, data is ", data);
+  // console.info("weekGoalChange, data is ", data);
   const weekCount = moment(day.value).week();
   const year = moment(day.value).format("YYYY");
   const yearWeek = year + "_" + weekCount;
-  console.info(data); // 接收来自子组件的数据
+  // console.info(data); // 接收来自子组件的数据
   DailyStatisticsDataManagerInstance.data.weeklyPlan[yearWeek] = data;
   DailyStatisticsDataManagerInstance.saveStatisticsData();
   weekGoalChangeFlag.value++;
@@ -166,9 +166,9 @@ watch(day, (newValue) => {
 });
 
 const dailyGoals = computed(() => {
-  console.info("dailyGoals computed");
+  // console.info("dailyGoals computed");
   if (weekGoalChangeFlag.value > 0) {
-    console.info("weekGoalChangeFlag is " + weekGoalChangeFlag.value);
+    // console.info("weekGoalChangeFlag is " + weekGoalChangeFlag.value);
   }
   let dailyGoals: Record<string, number> = {};
   // 获取上一个月的第一天
@@ -182,7 +182,7 @@ const dailyGoals = computed(() => {
     const number = getGoalOfWeek(date.format("YYYY"), weekCount);
     dailyGoals[date.format("YYYY-MM-DD")] = Math.floor(number / 7);
   }
-  console.info("dailyGoals", dailyGoals);
+  // console.info("dailyGoals", dailyGoals);
   return dailyGoals;
 });
 
@@ -212,13 +212,13 @@ const weekGoalsExplained = i18nG.instance(
 
 // 本日目标
 const targetWordContOfDay = computed(() => {
-  // console.info("targetWordContOfDay computed");
+  // // console.info("targetWordContOfDay computed");
   return dailyGoals.value[moment(day.value).format("YYYY-MM-DD")] || 0;
 });
 
 // 本周目标
 const targetWordContOfWeek = computed(() => {
-  console.info("targetWordContOfWeek computed");
+  // console.info("targetWordContOfWeek computed");
   return targetWordContOfDay.value * 7;
 });
 
@@ -233,7 +233,7 @@ const dayCountOfMonth = computed(() => {
 
 // 每日进度
 const dayProgress = computed(() => {
-  console.info("dayProgress computed, targetWordContOfDay is " + targetWordContOfDay.value);
+  // console.info("dayProgress computed, targetWordContOfDay is " + targetWordContOfDay.value);
   const today = moment(day.value).format("YYYY-MM-DD");
   const dayCount = monthCounts.value[today] || 0;
   if (dayCount == 0 || targetWordContOfDay.value == 0) {
@@ -256,13 +256,13 @@ const weekProgress = computed(() => {
     }
     return acc;
   }, 0);
-  // console.info("weekCount", weekCount);
+  // // console.info("weekCount", weekCount);
   const weekGoal = targetWordContOfDay.value * 7;
   if (weekCount == 0 || weekGoal == 0) {
     return 0;
   }
   const progress = Math.floor((weekCount / weekGoal) * 100);
-  // console.info("weekCount progress", progress);
+  // // console.info("weekCount progress", progress);
   return progress > 100 ? 100 : progress;
 });
 
