@@ -87,4 +87,19 @@ input[type='number'] {
    border: unset;
 
 }
+.el-input-number.is-without-controls .el-input__wrapper {
+ padding: unset;
+}
+
+.el-input__wrapper.is-focus{
+  box-shadow:unset;
+}
+
+.el-dialog__body {
+  /*让子项居中*/
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 水平居中 */
+
+}
 </style>
