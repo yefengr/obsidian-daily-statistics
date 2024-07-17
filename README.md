@@ -1,4 +1,4 @@
-# obsidian-vue-starter
+# Obsidian Daily Statistics
 
 ## 介绍
 统计每日书写的字数，并展示在日历中。
