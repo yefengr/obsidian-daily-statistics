@@ -1,7 +1,10 @@
 <template>
-<!--  <el-button :bg="false" :plain=true size="small" :icon="Edit" @click="dialogVisible = true" />-->
-  <el-icon id="edit-icon" ><Edit @click="dialogVisible = true" /></el-icon>
+  <!--  <el-button :bg="false" :plain=true size="small" :icon="Edit" @click="dialogVisible = true" />-->
+  <el-icon id="edit-icon">
+    <Edit @click="dialogVisible = true" />
+  </el-icon>
   <el-dialog
+    align-center
     v-model="dialogVisible"
     :title="title"
     :show-close=false
@@ -37,14 +40,12 @@
 <script lang="ts" setup>
 import { computed, defineEmits, ref, watch } from "vue";
 import { i18nG } from "@/globals";
-import { useDark, useToggle } from "@vueuse/core";
 
 import { Edit } from "@element-plus/icons-vue";
 
-
-// 获取当前主题模式
-const isDark = useDark();
-useToggle(isDark);
+// // 获取当前主题模式
+// const isDark = useDark();
+// useToggle(isDark);
 
 const emit = defineEmits(["setValue"]);
 const dialogVisible = ref(false);
@@ -72,12 +73,33 @@ const confirm = () => {
 <style>
 
 
-.el-icon{
+.el-icon {
   margin-left: 6px;
 }
 
 /* 定义鼠标悬停时的样式 */
 #edit-icon:hover {
   color: #1989fa;
+}
+
+input[type='number'] {
+   background: unset;
+   border: unset;
+
+}
+.el-input-number.is-without-controls .el-input__wrapper {
+ padding: unset;
+}
+
+.el-input__wrapper.is-focus{
+  box-shadow:unset;
+}
+
+.el-dialog__body {
+  /*让子项居中*/
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 水平居中 */
+
 }
 </style>
