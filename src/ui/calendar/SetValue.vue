@@ -40,14 +40,12 @@
 <script lang="ts" setup>
 import { computed, defineEmits, ref, watch } from "vue";
 import { i18nG } from "@/globals";
-import { useDark, useToggle } from "@vueuse/core";
 
 import { Edit } from "@element-plus/icons-vue";
 
-
-// 获取当前主题模式
-const isDark = useDark();
-useToggle(isDark);
+// // 获取当前主题模式
+// const isDark = useDark();
+// useToggle(isDark);
 
 const emit = defineEmits(["setValue"]);
 const dialogVisible = ref(false);
@@ -82,5 +80,11 @@ const confirm = () => {
 /* 定义鼠标悬停时的样式 */
 #edit-icon:hover {
   color: #1989fa;
+}
+
+input[type='number'] {
+   background: unset;
+   border: unset;
+
 }
 </style>

@@ -77,12 +77,13 @@
 </template>
 
 <script lang="ts" setup>
-import "element-plus/theme-chalk/dark/css-vars.css";
+// import "element-plus/theme-chalk/dark/css-vars.css";
+// import 'element-plus/theme-chalk/dark/css-vars.css'
+
 // 国际化¬
 import { ElConfigProvider } from "element-plus";
 import store from "@/data/Store";
 import { computed, ref, watch } from "vue";
-import "element-plus/dist/index.css";
 
 
 import { useDark, useToggle } from "@vueuse/core";
@@ -90,13 +91,30 @@ import moment from "moment/moment";
 import SetValue from "@/ui/calendar/SetValue.vue";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
 import { Edit, QuestionFilled, Warning } from "@element-plus/icons-vue";
+import "element-plus/theme-chalk/dark/css-vars.css";
+
 import { i18nG } from "@/globals";
 
 
 // 获取当前主题模式
 const isDark = useDark();
+isDark.value = document.body.classList.contains("theme-dark");
 useToggle(isDark);
 let tooltipEffi = isDark ? "light" : "dark";
+
+// 创建一个MutationObserver实例
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === "attributes" && mutation.attributeName === "class") {
+      isDark.value = document.body.classList.contains("theme-dark");
+      console.log("Is dark theme active?", isDark);
+    }
+  });
+});
+// 配置观察选项
+const config = { attributes: true, attributeFilter: ["class"] };
+// 观察body元素
+observer.observe(document.body, config);
 
 // 日期
 const day = ref(new Date());

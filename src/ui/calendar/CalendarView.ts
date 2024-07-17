@@ -56,6 +56,7 @@ export class CalendarView extends ItemView {
 
   async onOpen() {
 
+
     // 初始化数据
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
