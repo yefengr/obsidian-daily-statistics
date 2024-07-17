@@ -68,7 +68,10 @@ export class DailyStatisticsDataManager {
           JSON.stringify(new DailyStatisticsData())
         );
       }
-      this.data = JSON.parse(await this.app.vault.read(this.file));
+      this.data = Object.assign(
+        new DailyStatisticsData(),
+        await JSON.parse(await this.app.vault.read(this.file))
+      );
     }
 
     this.updateDate();
