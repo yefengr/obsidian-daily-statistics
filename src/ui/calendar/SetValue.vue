@@ -1,7 +1,10 @@
 <template>
-<!--  <el-button :bg="false" :plain=true size="small" :icon="Edit" @click="dialogVisible = true" />-->
-  <el-icon id="edit-icon" ><Edit @click="dialogVisible = true" /></el-icon>
+  <!--  <el-button :bg="false" :plain=true size="small" :icon="Edit" @click="dialogVisible = true" />-->
+  <el-icon id="edit-icon">
+    <Edit @click="dialogVisible = true" />
+  </el-icon>
   <el-dialog
+    align-center
     v-model="dialogVisible"
     :title="title"
     :show-close=false
@@ -72,7 +75,7 @@ const confirm = () => {
 <style>
 
 
-.el-icon{
+.el-icon {
   margin-left: 6px;
 }
 
