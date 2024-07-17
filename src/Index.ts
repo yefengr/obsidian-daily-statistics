@@ -6,8 +6,6 @@ import {
   TFile} from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
-import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
-import { DailyStatisticsDataManager } from "@/data/StatisticsDataManager";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 import i18n from "simplest-i18n";
 import { i18nG } from "@/globals";
