@@ -1,6 +1,5 @@
 import { type IconName, ItemView, WorkspaceLeaf } from "obsidian";
 import { createApp, type App as VueApp } from "vue";
-import Calendar from "@/ui/calendar/Calendar.vue";
 import store from "@/data/Store";
 import DailyStatisticsPlugin from "@/Index";
 import moment from "moment";
@@ -13,6 +12,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import en from "element-plus/es/locale/lang/en";
 import ElementPlus from "element-plus";
 import { i18nG } from "@/globals";
+import VueIndex from "@/ui/calendar/VueIndex.vue";
 
 
 export const Calendar_View = "CalendarView";
@@ -45,7 +45,7 @@ export class CalendarView extends ItemView {
   dailyStatisticsDataSaveListenerImpl = new class DailyStatisticsDataSaveListenerImpl
     implements DailyStatisticsDataSaveListener {
     onSave(data: DailyStatisticsData): void {
-      // // console.info("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
+      // // // console.log("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
       store.commit("updateStatisticsData", data.dayCounts);
     }
 
@@ -62,9 +62,10 @@ export class CalendarView extends ItemView {
     store.commit("updateMonth", yearMon);
     store.commit("updateStatisticsData", DailyStatisticsDataManagerInstance.data.dayCounts);
     store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
+    store.commit("updateWeeklyPlan", DailyStatisticsDataManagerInstance.data.weeklyPlan);
 
     // 创建并挂在组件
-    const _app = createApp(Calendar);
+    const _app = createApp(VueIndex);
     _app.config.globalProperties.$t = i18nG.instance;
     _app.use(store);
     _app.use(ElementPlus, {
@@ -79,10 +80,10 @@ export class CalendarView extends ItemView {
 
     const today = moment().format("YYYY-MM-DD");
     this.intervalId = setInterval(() => {
-      // console.info("检查日期是否为当天……");
+      // // console.log("检查日期是否为当天……");
       // 检查日期是否为当天，如果不是，则重新创建视图
       if (moment().format("YYYY-MM-DD") !== today) {
-        // console.info("日期更新，重置视图");
+        // // console.log("日期更新，重置视图");
         this.onClose();
         this.onOpen();
       }
@@ -91,9 +92,8 @@ export class CalendarView extends ItemView {
   }
 
 
-
   async onClose() {
-    // // console.info("CalendarView onClose");
+    // // // console.log("CalendarView onClose");
     if (this._vueApp) {
       this._vueApp.unmount();
     }

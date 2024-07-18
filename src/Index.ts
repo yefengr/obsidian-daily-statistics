@@ -36,7 +36,7 @@ export default class DailyStatisticsPlugin extends Plugin {
       this
     );
     DailyStatisticsDataManagerInstance.loadStatisticsData().then(() => {
-      // console.info("loadStatisticsData success. ");
+      // // console.log("loadStatisticsData success. ");
       i18nG.instance = i18n({
         locale: this.settings.language,
         locales: [
@@ -57,7 +57,7 @@ export default class DailyStatisticsPlugin extends Plugin {
     });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
-        // // console.info("debounce updateWordCount" + filepath);
+        // // // console.log("debounce updateWordCount" + filepath);
         if (
           this.settings.statisticsFolder != null &&
           this.settings.statisticsFolder != "" &&
