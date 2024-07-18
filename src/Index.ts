@@ -14,7 +14,6 @@ import i18n from "simplest-i18n";
 import { i18nG } from "@/globals";
 
 
-
 /**
  * 插件核心类
  */
@@ -47,16 +46,12 @@ export default class DailyStatisticsPlugin extends Plugin {
       });
 
       // 数据加载完成之后，再创建视图
-      new Promise(() => {
-        setTimeout(() => {
-          this.registerView(Calendar_View, (leaf) => {
-            this.calendarView = new CalendarView(leaf, this);
-            return this.calendarView;
-          });
-          this.activateView();
-
-        }, 1000);
-      });
+      setTimeout(() => {
+        this.registerView(Calendar_View, (leaf) => {
+          this.calendarView = new CalendarView(leaf, this);
+          return this.calendarView;
+        });
+      }, 500);
 
 
     });
@@ -162,8 +157,6 @@ export default class DailyStatisticsPlugin extends Plugin {
     // "Reveal" the leaf in case it is in a collapsed sidebar
     workspace.revealLeaf(leaf);
   }
-
-
 
 
   async loadSettings() {
