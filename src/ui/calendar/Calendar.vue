@@ -155,6 +155,7 @@ const weekGoalChange = (data: number) => {
   weekGoalChangeFlag.value++;
 };
 
+
 let currentMon = ref(moment(day.value).format("YYYY-MM"));
 // 通过周计划，计算出每日目标与每月目标
 // 先获取当前月份，然后获取当前月份起始日期he

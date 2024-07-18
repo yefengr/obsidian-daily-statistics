@@ -46,6 +46,18 @@ export default class DailyStatisticsPlugin extends Plugin {
         ]
       });
 
+      // 数据加载完成之后，再创建视图
+      new Promise(() => {
+        setTimeout(() => {
+          this.registerView(Calendar_View, (leaf) => {
+            this.calendarView = new CalendarView(leaf, this);
+            return this.calendarView;
+          });
+          this.activateView();
+
+        }, 1000);
+      });
+
 
     });
     this.debouncedUpdate = debounce(
@@ -89,16 +101,6 @@ export default class DailyStatisticsPlugin extends Plugin {
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
-
-    this.registerView(Calendar_View, (leaf) => {
-      this.calendarView = new CalendarView(leaf, this);
-      return this.calendarView;
-    });
-    new Promise(() => {
-      setTimeout(() => {
-        this.activateView();
-      }, 1000);
-    });
 
 
     this.addCommand({

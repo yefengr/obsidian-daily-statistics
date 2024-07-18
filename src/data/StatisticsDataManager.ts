@@ -50,7 +50,7 @@ export class DailyStatisticsDataManager {
       this.removeProperties(this.data, new DailyStatisticsSettings());
     } else {
       // 循环5次
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         this.file = this.app.vault.getFileByPath(this.filePath);
         if (this.file != null) {
           // console.info("dataFile ready");
@@ -58,7 +58,7 @@ export class DailyStatisticsDataManager {
         }
         // console.info("waiting for dataFile…… ");
         // 等待3秒
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       this.file = this.app.vault.getFileByPath(this.filePath);
       if (this.file == null) {
