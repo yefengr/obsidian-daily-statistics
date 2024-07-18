@@ -17,7 +17,9 @@
         </div>
         <div class="flex-centered3 ">
           <p>
-            {{ ((monthCounts[data.day] || 0) > dailyGoals[data.day]) && dailyGoals[data.day] > 0 ? "✔️" : "" }}
+
+            <el-icon  v-if="((monthCounts[data.day] || 0) > dailyGoals[data.day]) && dailyGoals[data.day] > 0"  ><Check /></el-icon>
+
           </p>
         </div>
       </template>
@@ -90,7 +92,7 @@ import { useDark, useToggle } from "@vueuse/core";
 import moment from "moment/moment";
 import SetValue from "@/ui/calendar/SetValue.vue";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
-import { Warning } from "@element-plus/icons-vue";
+import { Check, Warning } from "@element-plus/icons-vue";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
 import { i18nG } from "@/globals";
