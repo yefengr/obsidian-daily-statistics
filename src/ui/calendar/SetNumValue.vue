@@ -6,7 +6,7 @@
   <el-dialog
     align-center
     v-model="dialogVisible"
-    :title="title"
+    :title="$t('SetGoal')"
     :show-close=false
     width="300">
 
@@ -21,16 +21,10 @@
 
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false">
-          {{ $t(
-          "取消",
-          "Cancel"
-        ) }}
+          {{ $t("Cancel") }}
         </el-button>
         <el-button @click="confirm">
-          {{ $t(
-          "确定",
-          "Confirm"
-        ) }}
+          {{ $t("Confirm") }}
         </el-button>
       </div>
     </template>
@@ -58,11 +52,6 @@ watch(defaultData, (newValue) => {
   num.value = newValue;
 });
 
-const title = i18nG.instance(
-  "设定目标",
-  "Set a goal"
-);
-
 const confirm = () => {
   dialogVisible.value = false;
   emit("setValue", num.value);
@@ -83,16 +72,17 @@ const confirm = () => {
 }
 
 input[type='number'] {
-   background: unset;
-   border: unset;
+  background: unset;
+  border: unset;
 
 }
+
 .el-input-number.is-without-controls .el-input__wrapper {
- padding: unset;
+  padding: unset;
 }
 
-.el-input__wrapper.is-focus{
-  box-shadow:unset;
+.el-input__wrapper.is-focus {
+  box-shadow: unset;
 }
 
 .el-dialog__body {

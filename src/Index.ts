@@ -14,6 +14,7 @@ import i18n from "simplest-i18n";
 import { i18nG } from "@/globals";
 
 
+
 /**
  * 插件核心类
  */
@@ -25,6 +26,8 @@ export default class DailyStatisticsPlugin extends Plugin {
 
   async onload() {
     // 然后在某个地方初始化 i18nInstance
+    // console.info("i18nG.instance is " + i18n("common.add"));
+
 
 
     await this.loadSettings();

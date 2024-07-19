@@ -64,9 +64,7 @@ const store = createStore<StatisticsData>({
       return monthData;
     },
 
-    targetWordCont(state) {
-      return state.targetWordCont;
-    },
+
 
     /**
      * 三个月内的每日计划
@@ -107,9 +105,7 @@ const store = createStore<StatisticsData>({
       // // // console.log("updateStatisticsData:", state.dayCounts);
     },
 
-    updateTargetWordCont(state, targetWordCont: number) {
-      state.targetWordCont = targetWordCont;
-    },
+
 
     updateWeeklyPlan(state, weeklyPlan: Record<string, number>) {
       // console.log("updateWeeklyPlan, weeklyPlan is ", weeklyPlan);

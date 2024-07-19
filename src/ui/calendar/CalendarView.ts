@@ -11,7 +11,7 @@ import {
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import en from "element-plus/es/locale/lang/en";
 import ElementPlus from "element-plus";
-import { i18nG } from "@/globals";
+import i18n from "@/lang/index"; // 多语言引入
 import VueIndex from "@/ui/calendar/VueIndex.vue";
 
 
@@ -61,15 +61,17 @@ export class CalendarView extends ItemView {
     const yearMon = moment().format("YYYY-MM");
     store.commit("updateMonth", yearMon);
     store.commit("updateStatisticsData", DailyStatisticsDataManagerInstance.data.dayCounts);
-    store.commit("updateTargetWordCont", this.plugin.settings.dailyTargetWordCount);
     store.commit("updateWeeklyPlan", DailyStatisticsDataManagerInstance.data.weeklyPlan);
+
+    const locale = i18n.global.locale.value;
 
     // 创建并挂在组件
     const _app = createApp(VueIndex);
-    _app.config.globalProperties.$t = i18nG.instance;
+    _app.config.globalProperties.$t = i18n.global.t;
     _app.use(store);
+    _app.use(i18n);
     _app.use(ElementPlus, {
-      locale: this.plugin.settings.language == "zh-cn" ? zhCn : en
+      locale: locale == "zh_cn" ? zhCn : en
     });
     _app.mount(this.containerEl);
     this._vueApp = _app;

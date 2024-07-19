@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import SetValue from "@/ui/calendar/SetValue.vue";
+import SetValue from "@/ui/calendar/SetNumValue.vue";
 import { Warning } from "@element-plus/icons-vue";
 import { computed } from "vue";
 import moment from "moment";
@@ -15,15 +15,7 @@ let tooltipEffi = isDark ? "light" : "dark";
 //==============
 // 进度条
 
-const dailyGoalsExplained = i18nG.instance(
-  "每日目标 = 每周目标 / 7",
-  "Daily Goal = Weekly Goal / 7"
-);
 
-const weekGoalsExplained = i18nG.instance(
-  "每月目标 = 每日目标 * 当月天数",
-  "Monthly Goal = Daily Goal * Days in the Month"
-);
 
 const threeMonthsData = computed(() => {
   return store.getters.threeMonthsData || {};
@@ -124,13 +116,12 @@ const weekGoalChange = (data: number) => {
   <div class="progress">
     <p class="goals">
       {{ $t(
-      "每日目标：",
-      "Daily goals: "
+      "dailyGoals"
     ) }}{{ targetWordContOfDay }}
       <el-tooltip
         class="box-item"
         :effect="tooltipEffi"
-        :content="dailyGoalsExplained"
+        :content="$t('dailyGoalsExplained')"
         placement="top"
       >
         <el-icon>
@@ -141,8 +132,7 @@ const weekGoalChange = (data: number) => {
     <el-progress :percentage="dayProgress" :status="dayProgress>=100 ?'success':''" />
     <p class="goals">
       {{ $t(
-      "每周目标：",
-      "Weekly goals: "
+      "weeklyGoals"
     ) }}
       {{ targetWordContOfWeek }}
       <SetValue @set-value="weekGoalChange" :default-data="targetWordContOfWeek" />
@@ -151,13 +141,12 @@ const weekGoalChange = (data: number) => {
     <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
     <p class="goals">
       {{ $t(
-      "每月目标：",
-      "Monthly goals: "
+      "monthlyGoals"
     ) }}{{ targetWordContOfDay * dayCountOfMonth }}
       <el-tooltip
         class="box-item"
         :effect="tooltipEffi"
-        :content="weekGoalsExplained"
+        :content="$t('weekGoalsExplained')"
         placement="top"
       >
         <el-icon>
