@@ -121,7 +121,7 @@ export class DailyStatisticsDataManager {
       // // // console.log("saveStatisticsData…………");
 
       if (!this.loadingData) {
-        console.info("saveStatisticsData, loadingData is false");
+        // console.info("saveStatisticsData, loadingData is false");
         return
       }
       this.updateDate();

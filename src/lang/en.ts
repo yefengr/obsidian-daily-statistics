@@ -16,7 +16,7 @@ export default {
 
   //  设置界面
   "statisticalDataStorageAddress": "Statistics data saving address",
-  "statisticalDataStorageAddressExplained": "Set the daily statistical data saving address. If it is empty, it will be saved in the default plug-in directory. It is recommended to use the .json data format. After modifying this configuration, you need to reload the plugin."
+  "statisticalDataStorageAddressExplained": "Set the daily statistical data saving address. If it is empty, it will be saved in the default plug-in directory. If the data file exists in a parent folder, please create it in advance. It is recommended to use the .json data format. After modifying this configuration, you need to reload the plugin."
   ,
   "statisticsCatalog": "Statistics Directory"
   ,
