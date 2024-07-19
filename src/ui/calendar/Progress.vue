@@ -134,18 +134,26 @@ const weekGoalChange = (data: number) => {
       "weeklyGoals"
     ) }}
       {{ targetWordContOfWeek }}
+      <el-tooltip
+        class="box-item"
+        :effect="tooltipEffi"
+        :content="$t('weekGoalsExplained')"
+        placement="top"
+      >
+        <el-icon>
+          <Warning />
+        </el-icon>
+      </el-tooltip>
       <SetValue @set-value="weekGoalChange" :default-data="targetWordContOfWeek" />
 
     </p>
     <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
     <p class="goals">
-      {{ $t(
-      "monthlyGoals"
-    ) }}{{ targetWordContOfDay * dayCountOfMonth }}
+      {{ $t("monthlyGoals") }}{{ targetWordContOfDay * dayCountOfMonth }}
       <el-tooltip
         class="box-item"
         :effect="tooltipEffi"
-        :content="$t('weekGoalsExplained')"
+        :content="$t('monthGoalsExplained')"
         placement="top"
       >
         <el-icon>

@@ -9,7 +9,9 @@ export default {
   "monthlyGoals": "Monthly goals: ",
 
   "dailyGoalsExplained": "Daily Goal = Weekly Goal / 7",
-  "weekGoalsExplained": "Monthly Goal = Daily Goal * Days in the Month",
+
+  "weekGoalsExplained": "If no goals are set for the current week, the previous week's goals will be used by default.",
+  "monthGoalsExplained": "Monthly Goal = Daily Goal * Number of Days in the Month",
   "SetGoal": "Set a goal",
   "Confirm": "Confirm",
   "Cancel": "Cancel",
@@ -23,7 +25,7 @@ export default {
   "statisticsCatalogExplained": "Set the directory where statistical data is required. If it is empty, the data of the entire database will be counted."
 
 // 状态栏
-  ,"todaySWordCount":"Today's word count: "
+  , "todaySWordCount": "Today's word count: "
 
   //
   , "openTheCalendarPanel": "Open calendar panel"
