@@ -33,7 +33,6 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, ref, watch } from "vue";
-import { i18nG } from "@/globals";
 
 import { Edit } from "@element-plus/icons-vue";
 

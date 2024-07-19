@@ -43,9 +43,12 @@ export default class DailyStatisticsPlugin extends Plugin {
           this.calendarView = new CalendarView(leaf, this);
           return this.calendarView;
         });
+        this.activateView()
       }, 500);
 
 
+    }).catch((e) => {
+      console.error("loadStatisticsData error", e);
     });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {

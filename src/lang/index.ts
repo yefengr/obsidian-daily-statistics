@@ -1,4 +1,4 @@
-import { createI18n, useI18n } from "vue-i18n"; // 引入i18n创建多语言对象
+import { createI18n } from "vue-i18n"; // 引入i18n创建多语言对象
 import zhCnLocale from "./zh-cn"; // 引入中文对应语言配置
 import enLocale from "./en"; // 引入英文对应语言配置
 import { moment } from "obsidian";

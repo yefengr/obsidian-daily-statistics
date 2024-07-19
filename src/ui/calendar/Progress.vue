@@ -6,7 +6,6 @@ import { computed } from "vue";
 import moment from "moment";
 import { useDark } from "@vueuse/core";
 import store from "@/data/Store";
-import { i18nG } from "@/globals";
 
 const isDark = useDark();
 let tooltipEffi = isDark ? "light" : "dark";

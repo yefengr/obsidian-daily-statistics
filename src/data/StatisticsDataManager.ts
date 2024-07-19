@@ -29,6 +29,8 @@ export class DailyStatisticsDataManager {
   data: DailyStatisticsData;
   plugin!: Plugin;
 
+  loadingData = false;
+
   constructor() {
     // 给一个默认值，避免出错
     this.data = new DailyStatisticsData();
@@ -66,7 +68,7 @@ export class DailyStatisticsDataManager {
       }
       this.file = this.app.vault.getFileByPath(this.filePath);
       if (this.file == null) {
-        // // console.log("create dataFile " + this.filePath);
+        console.log("create dataFile " + this.filePath);
         this.file = await this.app.vault.create(
           this.filePath,
           JSON.stringify(new DailyStatisticsData())
@@ -84,6 +86,7 @@ export class DailyStatisticsDataManager {
     } else {
       this.currentWordCount = 0;
     }
+    this.loadingData = true;
   }
 
   removeProperties(
@@ -117,6 +120,10 @@ export class DailyStatisticsDataManager {
     try {
       // // // console.log("saveStatisticsData…………");
 
+      if (!this.loadingData) {
+        console.info("saveStatisticsData, loadingData is false");
+        return
+      }
       this.updateDate();
       if (this.filePath != null && this.filePath != "") {
         // // // console.log("saveStatisticsData, dataFile is " + this.filePath);
