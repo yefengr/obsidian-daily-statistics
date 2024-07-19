@@ -10,9 +10,7 @@ import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
-import i18n from "simplest-i18n";
-import { i18nG } from "@/globals";
-
+import i18n from "@/lang";
 
 
 /**
@@ -24,12 +22,12 @@ export default class DailyStatisticsPlugin extends Plugin {
   private statusBarItemEl!: HTMLElement;
   calendarView!: CalendarView;
 
+
   async onload() {
     // 然后在某个地方初始化 i18nInstance
     // console.info("i18nG.instance is " + i18n("common.add"));
 
-
-
+    const t = i18n.global.t;
     await this.loadSettings();
 
 
@@ -39,15 +37,6 @@ export default class DailyStatisticsPlugin extends Plugin {
       this
     );
     DailyStatisticsDataManagerInstance.loadStatisticsData().then(() => {
-      // // console.log("loadStatisticsData success. ");
-      i18nG.instance = i18n({
-        locale: this.settings.language,
-        locales: [
-          "zh-cn",
-          "en"
-        ]
-      });
-
       // 数据加载完成之后，再创建视图
       setTimeout(() => {
         this.registerView(Calendar_View, (leaf) => {
@@ -85,7 +74,7 @@ export default class DailyStatisticsPlugin extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarItemEl.setText(
-          i18nG.instance("今日字数：", "Today's word count: ") +
+          t("todaySWordCount") +
           DailyStatisticsDataManagerInstance.currentWordCount
         )
         ;
@@ -103,7 +92,7 @@ export default class DailyStatisticsPlugin extends Plugin {
 
     this.addCommand({
       id: "open-calendar",
-      name: i18nG.instance("打开日历面板", "Open calendar panel"),
+      name: t("openTheCalendarPanel"),
       callback: () => {
         this.activateView();
       }
@@ -117,30 +106,10 @@ export default class DailyStatisticsPlugin extends Plugin {
   }
 
 
-  // 重新加载
-  async languageChange() {
-    i18nG.instance = i18n({
-      locale: this.settings.language,
-      locales: [
-        "zh-cn",
-        "en"
-      ]
-    });
-    await this.calendarView.onClose();
-    await this.calendarView.onOpen();
-    this.addCommand({
-      id: "open-calendar",
-      name: i18nG.instance("打开日历面板", "Open calendar panel"),
-      callback: () => {
-        this.activateView();
-      }
-    });
-  }
-
   async activateView() {
     const { workspace } = this.app;
 
-    let leaf: WorkspaceLeaf | null = null;
+    let leaf: WorkspaceLeaf | null;
     const leaves = workspace.getLeavesOfType(Calendar_View);
 
     if (leaves.length > 0) {

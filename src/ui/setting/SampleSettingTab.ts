@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import DailyStatisticsPlugin from "@/Index";
-import i18n from "simplest-i18n";
+import i18n from "@/lang";
 
 /**
  * 设置页面
@@ -16,37 +16,13 @@ export class SampleSettingTab extends PluginSettingTab {
 
   display(): void {
     const { containerEl } = this;
-
-    const t = i18n({
-      locale: this.plugin.settings.language,
-      locales: [
-        "zh-cn",
-        "en"
-      ]
-    });
-
+    const t = i18n.global.t;
     containerEl.empty();
 
-    new Setting(containerEl)
-      .setName(t("语言", "Language"))
-      .setDesc(t("设置页面语言。", "Set the page language. "))
-      .addDropdown((dropdown) => {
-        dropdown
-          .addOption("zh-cn", "中文")
-          .addOption("en", "English")
-          .setValue(this.plugin.settings.language)
-          .onChange(async (value) => {
-            this.plugin.settings.language = value;
-            await this.plugin.saveSettings();
-            this.display();
-            await this.plugin.languageChange();
-          });
-      });
 
     new Setting(containerEl)
-      .setName(t("统计数据保存地址", "Statistics data saving address"))
-      .setDesc(t("设置每日统计数据保存地址，如果为空，则保存在默认的插件目录下。建议使用 .json 的数据格式。修改该配置后，需要重新加载插件。",
-        "Set the daily statistical data saving address. If it is empty, it will be saved in the default plug-in directory. It is recommended to use the .json data format. After modifying this configuration, you need to reload the plugin."))
+      .setName(t("statisticalDataStorageAddress"))
+      .setDesc(t("statisticalDataStorageAddressExplained"))
       .addText((text) =>
         text.setValue(this.plugin.settings.dataFile).onChange(async (value) => {
           this.plugin.settings.dataFile = value;
@@ -55,11 +31,11 @@ export class SampleSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName(t("统计目录", "Statistics catalog"))
-      .setDesc(t("设置需要统计数据的目录，如果为空，则统计全库的数据。", "Set the directory to be counted. If it is empty, all data in the library will be counted."))
+      .setName(t("statisticsCatalog"))
+      .setDesc(t("statisticsCatalogExplained"))
       .addText((text) =>
         text
-          .setPlaceholder(t("全部", "All"))
+          .setPlaceholder(t("all"))
           .setValue(this.plugin.settings.statisticsFolder)
           .onChange(async (value) => {
             this.plugin.settings.statisticsFolder = value;

@@ -9,7 +9,6 @@ const messages = {
   en: enLocale
 };
 let locale = moment.locale();
-// console.log("locale is " + locale);
 
 if (locale === "zh_cn" || locale === "zh-cn" || locale === "zh") {
   locale = "zh_cn";

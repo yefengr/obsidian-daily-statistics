@@ -119,8 +119,7 @@ const store = createStore<StatisticsData>({
 
 
       DailyStatisticsDataManagerInstance.data.weeklyPlan = state.weeklyPlan;
-      DailyStatisticsDataManagerInstance.saveStatisticsData().then(r => {
-      });
+      DailyStatisticsDataManagerInstance.saveStatisticsData().then();
     }
 
   }
