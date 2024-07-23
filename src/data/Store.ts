@@ -1,6 +1,6 @@
 // Store.ts
 import { createStore } from "vuex";
-import moment from "moment";
+import moment from "moment/moment";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
 
 interface StatisticsData {

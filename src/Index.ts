@@ -1,4 +1,4 @@
-import  {
+import {
   debounce,
   type Debouncer,
   MarkdownView,
