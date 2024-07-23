@@ -11,6 +11,9 @@ importers:
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.4.21(typescript@5.1.6))
+      pnpm:
+        specifier: ^9.6.0
+        version: 9.6.0
       vue-i18n:
         specifier: ^9.13.1
         version: 9.13.1(vue@3.4.21(typescript@5.1.6))
@@ -66,9 +69,6 @@ importers:
       inquirer:
         specifier: ^9.2.17
         version: 9.2.17
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
       obsidian:
         specifier: latest
         version: 1.5.7-1(@codemirror/state@6.4.1)(@codemirror/view@6.26.1)
@@ -1249,9 +1249,6 @@ packages:
   moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
 
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
-
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
@@ -1351,6 +1348,11 @@ packages:
 
   pkg-types@1.1.3:
     resolution: {integrity: sha512-+JrgthZG6m3ckicaOB74TwQ+tBWsFl3qVQg7mN8ulwSOElJ7gBhKzj2VkCPnZ4NlF6kEquYU+RIYNVAvzd54UA==}
+
+  pnpm@9.6.0:
+    resolution: {integrity: sha512-ONxvuo26NbOTQLlwARLC/h4S8QsXE0cVpKqYzPe7A152/Zgc8Ls4TfqY+NavVIHCvvL0Jmokv6IMNOtxR84LXg==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   postcss-selector-parser@6.0.16:
     resolution: {integrity: sha512-A0RVJrX+IUkVZbW3ClroRWurercFhieevHB38sr2+l9eUClMqome3LmEmnhlNy+5Mr2EYN6B2Kaw9wYdd+VHiw==}
@@ -2875,8 +2877,6 @@ snapshots:
 
   moment@2.29.4: {}
 
-  moment@2.30.1: {}
-
   ms@2.1.2: {}
 
   muggle-string@0.4.1: {}
@@ -2968,6 +2968,8 @@ snapshots:
       confbox: 0.1.7
       mlly: 1.7.1
       pathe: 1.1.2
+
+  pnpm@9.6.0: {}
 
   postcss-selector-parser@6.0.16:
     dependencies:

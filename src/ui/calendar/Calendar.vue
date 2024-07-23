@@ -34,7 +34,7 @@ import store from "@/data/Store";
 import { computed, ref, watch } from "vue";
 
 
-import moment from "moment/moment";
+import moment from "moment";
 import { Check } from "@element-plus/icons-vue";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
