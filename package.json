@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "dayjs": "^1.11.12",
     "vue-i18n": "^9.13.1"
   }
 }

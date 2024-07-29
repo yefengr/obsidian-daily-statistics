@@ -11,6 +11,7 @@ import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager
 import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 import i18n from "@/lang";
+import moment from "moment/moment";
 
 
 /**
@@ -24,8 +25,16 @@ export default class DailyStatisticsPlugin extends Plugin {
 
 
   async onload() {
-    // 然后在某个地方初始化 i18nInstance
-    // console.info("i18nG.instance is " + i18n("common.add"));
+
+    // 尽早的设置时间地域
+    const locale = i18n.global.locale.value;
+    if (locale == "zh_cn") {
+      moment.locale("zh-cn", {
+        week: {
+          dow: 1
+        }
+      });
+    }
 
     const t = i18n.global.t;
     await this.loadSettings();
@@ -43,7 +52,7 @@ export default class DailyStatisticsPlugin extends Plugin {
           this.calendarView = new CalendarView(leaf, this);
           return this.calendarView;
         });
-        this.activateView()
+        this.activateView();
       }, 500);
 
 

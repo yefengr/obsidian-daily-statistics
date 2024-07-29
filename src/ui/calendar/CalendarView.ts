@@ -9,6 +9,8 @@ import {
   type DailyStatisticsDataSaveListener
 } from "@/data/StatisticsDataManager";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
 import en from "element-plus/es/locale/lang/en";
 import ElementPlus from "element-plus";
 import i18n from "@/lang/index"; // 多语言引入
@@ -45,7 +47,6 @@ export class CalendarView extends ItemView {
   dailyStatisticsDataSaveListenerImpl = new class DailyStatisticsDataSaveListenerImpl
     implements DailyStatisticsDataSaveListener {
     onSave(data: DailyStatisticsData): void {
-      // // // console.log("DailyStatisticsDataSaveListenerImpl-CalendarView onSave");
       store.commit("updateStatisticsData", data.dayCounts);
     }
 
@@ -64,6 +65,10 @@ export class CalendarView extends ItemView {
     store.commit("updateWeeklyPlan", DailyStatisticsDataManagerInstance.data.weeklyPlan);
 
     const locale = i18n.global.locale.value;
+    if (locale == "zh_cn") {
+      dayjs.locale("zh-cn");
+    }
+
 
     // 创建并挂在组件
     const _app = createApp(VueIndex);
