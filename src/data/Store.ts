@@ -80,6 +80,7 @@ const store = createStore<StatisticsData>({
         const date = moment().dayOfYear(i);
         const weekCount = date.week();
         const number = getGoalOfWeek(state.weeklyPlan, date.format("YYYY"), weekCount);
+        // console.info("dailyGoals", date.format("YYYY-MM-DD"), "weekCount", weekCount, number);
         dailyGoals[date.format("YYYY-MM-DD")] = Math.floor(number / 7);
       }
       // // console.log("dailyGoals", dailyGoals);

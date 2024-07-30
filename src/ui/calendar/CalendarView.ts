@@ -67,6 +67,11 @@ export class CalendarView extends ItemView {
     const locale = i18n.global.locale.value;
     if (locale == "zh_cn") {
       dayjs.locale("zh-cn");
+      moment.locale("zh-cn", {
+        week: {
+          dow: 1
+        }
+      });
     }
 
 
