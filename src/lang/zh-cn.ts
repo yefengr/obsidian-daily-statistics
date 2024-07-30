@@ -1,6 +1,12 @@
+
 export default {
   // common
   "all": "全部",
+
+  // 日历
+  "modifyWordCount": "修改字数",
+  "modifyWordCountNotice": "超过当前日期，不能修改字数。",
+
 
 
   // 进度条

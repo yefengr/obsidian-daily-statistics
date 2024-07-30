@@ -16,6 +16,8 @@ export class DailyStatisticsData {
   todayWordCount: Record<string, WordCount> = {};
   // 每周计划
   weeklyPlan: Record<string, number> = {};
+  // 当日手动修改的字数
+  currentManuallyModifyWordCount: number = 0;
 }
 
 export class DailyStatisticsDataManager {
@@ -59,10 +61,10 @@ export class DailyStatisticsDataManager {
       for (let i = 0; i < 10; i++) {
         this.file = this.app.vault.getFileByPath(this.filePath);
         if (this.file != null) {
-          // // console.log("dataFile ready");
+          // console.log("dataFile ready");
           break;
         }
-        // // console.log("waiting for dataFile…… ");
+        // console.log("waiting for dataFile…… ");
         // 等待3秒
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
@@ -80,11 +82,15 @@ export class DailyStatisticsDataManager {
       );
     }
 
+
     this.updateDate();
     if (Object.prototype.hasOwnProperty.call(this.data.dayCounts, this.today)) {
       this.updateCounts();
     } else {
+      // 如果记录中，没有当前日期的记录，则说明是新的一天，更新每日字数，和初始化记录
+      this.data.todayWordCount = {};
       this.currentWordCount = 0;
+      this.data.currentManuallyModifyWordCount = 0;
     }
     this.loadingData = true;
   }
@@ -118,15 +124,12 @@ export class DailyStatisticsDataManager {
   // 保存数据
   async saveStatisticsData() {
     try {
-      // // // console.log("saveStatisticsData…………");
 
       if (!this.loadingData) {
-        // console.info("saveStatisticsData, loadingData is false");
-        return
+        return;
       }
       this.updateDate();
       if (this.filePath != null && this.filePath != "") {
-        // // // console.log("saveStatisticsData, dataFile is " + this.filePath);
         if (this.file == null) {
           this.file = await this.app.vault.create(
             this.filePath,
@@ -135,7 +138,6 @@ export class DailyStatisticsDataManager {
         }
         await this.app.vault.modify(this.file, JSON.stringify(this.data));
       } else {
-        // // // console.log("saveStatisticsData, save data in setting");
         let data = await this.plugin.loadData();
         // // // console.log("saveStatisticsData, data is " + JSON.stringify(data));
         if (data == null) {
@@ -168,9 +170,7 @@ export class DailyStatisticsDataManager {
   updateWordCount(contents: string, filepath: string) {
     const curr = this.getWordCount(contents);
     if (Object.prototype.hasOwnProperty.call(this.data.dayCounts, this.today)) {
-      if (
-        Object.prototype.hasOwnProperty.call(this.data.todayWordCount, filepath)
-      ) {
+      if (Object.prototype.hasOwnProperty.call(this.data.todayWordCount, filepath)) {
         //updating existing file
         this.data.todayWordCount[filepath].current = curr;
       } else {
@@ -189,16 +189,24 @@ export class DailyStatisticsDataManager {
 
   updateDate() {
     this.today = moment().format("YYYY-MM-DD");
-    // // // console.log("updateDate, today is " + this.today)
   }
 
   updateCounts() {
     this.currentWordCount = Object.values(this.data.todayWordCount)
       .map((wordCount) => Math.max(0, wordCount.current - wordCount.initial))
       .reduce((a, b) => a + b, 0);
+    this.currentWordCount += this.data.currentManuallyModifyWordCount;
     this.data.dayCounts[this.today] = this.currentWordCount;
 
     this.saveStatisticsData().then();
+  }
+
+  updateCurrentWordCount(wordCount: number) {
+    // 先减去旧的手动值，得到真实值
+    const actualValue = this.currentWordCount - this.data.currentManuallyModifyWordCount;
+    // 然后再根据真实值，计算新的手动值
+    this.data.currentManuallyModifyWordCount = wordCount - actualValue;
+    this.currentWordCount = wordCount;
   }
 
 

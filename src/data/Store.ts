@@ -65,7 +65,6 @@ const store = createStore<StatisticsData>({
     },
 
 
-
     /**
      * 三个月内的每日计划
      * @param state
@@ -102,9 +101,7 @@ const store = createStore<StatisticsData>({
 
     updateStatisticsData(state, dayCounts: Record<string, number>) {
       state.dayCounts = { ...dayCounts };
-      // // // console.log("updateStatisticsData:", state.dayCounts);
     },
-
 
 
     updateWeeklyPlan(state, weeklyPlan: Record<string, number>) {
@@ -120,7 +117,26 @@ const store = createStore<StatisticsData>({
 
       DailyStatisticsDataManagerInstance.data.weeklyPlan = state.weeklyPlan;
       DailyStatisticsDataManagerInstance.saveStatisticsData().then();
+    },
+
+    // 更新每日字数
+    updateDayCounts(state, dayCounts: Record<string, number>) {
+      // 获取dayCounts 第一个属性的名称
+      const day = Object.keys(dayCounts)[0];
+      // 如果修改的时间是当前日期，需要单独做处理，记录在已有字数基础上，变更的数字
+      if (moment(day).isSame(moment(), "day")) {
+        DailyStatisticsDataManagerInstance.updateCurrentWordCount(dayCounts[day]);
+      }
+
+      const assign = Object.assign(
+        state.dayCounts,
+        dayCounts
+      );
+      state.dayCounts = { ...assign };
+      DailyStatisticsDataManagerInstance.data.dayCounts = state.dayCounts;
+      DailyStatisticsDataManagerInstance.saveStatisticsData().then();
     }
+
 
   }
 });

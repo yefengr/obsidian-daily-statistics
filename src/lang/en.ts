@@ -2,6 +2,10 @@ export default {
 
   "all": "All",
 
+  // 日历
+  "modifyWordCount": "Modify word count",
+  "modifyWordCountNotice": "The word count cannot be modified after the current date.",
+
   // 进度条
 
   "dailyGoals": "Daily goals: ",

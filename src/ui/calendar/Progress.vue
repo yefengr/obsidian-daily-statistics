@@ -15,7 +15,6 @@ let tooltipEffi = isDark ? "light" : "dark";
 // 进度条
 
 
-
 const threeMonthsData = computed(() => {
   return store.getters.threeMonthsData || {};
 });
@@ -47,7 +46,7 @@ const dayProgress = computed(() => {
   // console.log("dayProgress", threeMonthsData.value, "store.getters.currentDay", store.getters.currentDay);
   const dayCount = threeMonthsData.value[store.getters.currentDay] || 0;
   // console.log("dayProgress dayCount is", dayCount, "targetWordContOfDay is ", targetWordContOfDay.value);
-  if (dayCount == 0 || targetWordContOfDay.value == 0) {
+  if (dayCount <= 0 || targetWordContOfDay.value == 0) {
     return 0;
   }
   let progress = Math.floor(dayCount / targetWordContOfDay.value * 100);
@@ -69,7 +68,7 @@ const weekProgress = computed(() => {
   }, 0);
   // // // console.log("weekCount", weekCount);
   const weekGoal = targetWordContOfDay.value * 7;
-  if (weekCount == 0 || weekGoal == 0) {
+  if (weekCount <= 0 || weekGoal == 0) {
     return 0;
   }
   const progress = Math.floor((weekCount / weekGoal) * 100);
@@ -88,7 +87,7 @@ const monthProgress = computed(() => {
     return acc;
   }, 0);
   const monthGoal = targetWordContOfDay.value * dayCountOfMonth.value;
-  if (monthCount == 0 || monthGoal == 0) {
+  if (monthCount <= 0 || monthGoal == 0) {
     return 0;
   }
   const progress = Math.floor((monthCount / monthGoal) * 100
