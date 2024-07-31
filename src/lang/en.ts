@@ -15,7 +15,7 @@ export default {
   "dailyGoalsExplained": "Daily Goal = Weekly Goal / 7",
 
   "weekGoalsExplained": "If no goals are set for the current week, the previous week's goals will be used by default.",
-  "monthGoalsExplained": "Monthly Goal = Daily Goal * Number of Days in the Month",
+  "monthGoalsExplained": "Monthly Goal = Daily goals for the month are accumulated.",
   "SetGoal": "Set a goal",
   "Confirm": "Confirm",
   "Cancel": "Cancel",

@@ -15,7 +15,7 @@ export default {
   "monthlyGoals": "每月目标：",
   "dailyGoalsExplained": "每日目标 = 每周目标 / 7",
   "weekGoalsExplained": "如果当前周未设置目标，则默认使用上一周的目标。",
-  "monthGoalsExplained": "每月目标 = 每日目标 * 当月天数",
+  "monthGoalsExplained": "每月目标 = 当月每日目标累加。",
   "SetGoal": "设置目标",
   "Confirm": "确定",
   "Cancel": "取消",

@@ -65,6 +65,13 @@ const store = createStore<StatisticsData>({
     },
 
 
+    // 获取本周目标
+    weeklyGoal(state) {
+      const weekCount = moment(state.currentDay).week();
+      return getGoalOfWeek(state.weeklyPlan, moment().format("YYYY"), weekCount);
+    },
+
+
     /**
      * 三个月内的每日计划
      * @param state
@@ -83,8 +90,27 @@ const store = createStore<StatisticsData>({
         // console.info("dailyGoals", date.format("YYYY-MM-DD"), "weekCount", weekCount, number);
         dailyGoals[date.format("YYYY-MM-DD")] = Math.floor(number / 7);
       }
-      // // console.log("dailyGoals", dailyGoals);
+      // console.log("dailyGoals", dailyGoals);
       return dailyGoals;
+    },
+
+    // 获取每月目标
+    monthlyGoal(state) {
+      let monthlyGoal = 0;
+      // 获取当前月份的第一天
+      const monthStart = moment(state.currentMonth).startOf("month").dayOfYear();
+      // 获取当前月份的最后一天
+      const monthEnd = moment(state.currentMonth).endOf("month").dayOfYear();
+      // 找出每一天的目标，进行累加
+      for (let i = monthStart; i <= monthEnd; i++) {
+        const date = moment().dayOfYear(i);
+        const weekCount = date.week();
+        const number = getGoalOfWeek(state.weeklyPlan, date.format("YYYY"), weekCount);
+        // console.log("monthlyGoal", date.format("YYYY-MM-DD"), "weekCount", weekCount, number / 7);
+        monthlyGoal += Math.floor(number / 7);
+      }
+      // console.log("month is ", state.currentMonth, "monthlyGoal", monthlyGoal, "monthStart is ", moment().dayOfYear(monthStart).format("YYYY-MM-DD"), "monthEnd is ", moment().dayOfYear(monthEnd).format("YYYY-MM-DD"));
+      return monthlyGoal;
     }
 
 

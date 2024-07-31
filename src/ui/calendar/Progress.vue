@@ -15,37 +15,36 @@ let tooltipEffi = isDark ? "light" : "dark";
 // 进度条
 
 
+// 三个月内，每日字数集合
 const threeMonthsData = computed(() => {
   return store.getters.threeMonthsData || {};
 });
 
-const threeMonthsDayPlan = computed(() => {
-  return store.getters.threeMonthsDayPlan || {};
-});
+// const threeMonthsDayPlan = computed(() => {
+//   return store.getters.threeMonthsDayPlan || {};
+// });
 
 
 // 本日目标
 const targetWordContOfDay = computed(() => {
   // console.log("targetWordContOfDay", threeMonthsData.value);
-  return threeMonthsDayPlan.value[store.getters.currentDay] || 0;
+  return Math.floor(store.getters.weeklyGoal / 7) || 0;
 });
 
 // 本周目标
 const targetWordContOfWeek = computed(() => {
-  return targetWordContOfDay.value * 7;
+  return store.getters.weeklyGoal;
 });
 
-// 获取指定月份的总天数
-const dayCountOfMonth = computed(() => {
-  return moment(store.getters.month).daysInMonth();
+// 本月目标
+const targetWordContOfMonth = computed(() => {
+  return store.getters.monthlyGoal;
 });
 
 
 // 每日进度
 const dayProgress = computed(() => {
-  // console.log("dayProgress", threeMonthsData.value, "store.getters.currentDay", store.getters.currentDay);
   const dayCount = threeMonthsData.value[store.getters.currentDay] || 0;
-  // console.log("dayProgress dayCount is", dayCount, "targetWordContOfDay is ", targetWordContOfDay.value);
   if (dayCount <= 0 || targetWordContOfDay.value == 0) {
     return 0;
   }
@@ -66,13 +65,12 @@ const weekProgress = computed(() => {
     }
     return acc;
   }, 0);
-  // // // console.log("weekCount", weekCount);
-  const weekGoal = targetWordContOfDay.value * 7;
+
+  const weekGoal = targetWordContOfWeek.value;
   if (weekCount <= 0 || weekGoal == 0) {
     return 0;
   }
   const progress = Math.floor((weekCount / weekGoal) * 100);
-  // // // console.log("weekCount progress", progress);
   return progress > 100 ? 100 : progress;
 });
 
@@ -86,7 +84,7 @@ const monthProgress = computed(() => {
     }
     return acc;
   }, 0);
-  const monthGoal = targetWordContOfDay.value * dayCountOfMonth.value;
+  const monthGoal = targetWordContOfMonth.value;
   if (monthCount <= 0 || monthGoal == 0) {
     return 0;
   }
@@ -101,10 +99,6 @@ const weekGoalChange = (data: number) => {
   const year = moment(store.getters.currentDay).format("YYYY");
   const yearWeek = year + "_" + weekCount;
   store.commit("updateWeeklyPlan", { [yearWeek]: data });
-  // // console.log(data); // 接收来自子组件的数据
-//   DailyStatisticsDataManagerInstance.data.weeklyPlan[yearWeek] = data;
-//   DailyStatisticsDataManagerInstance.saveStatisticsData();
-//   weekGoalChangeFlag.value++;
 };
 
 
@@ -148,7 +142,7 @@ const weekGoalChange = (data: number) => {
     </p>
     <el-progress :percentage="weekProgress" :status="weekProgress>=100 ?'success':''" />
     <p class="goals">
-      {{ $t("monthlyGoals") }}{{ targetWordContOfDay * dayCountOfMonth }}
+      {{ $t("monthlyGoals") }}{{ targetWordContOfMonth }}
       <el-tooltip
         class="box-item"
         :effect="tooltipEffi"
