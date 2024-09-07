@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting, SliderComponent } from "obsidian";
 import DailyStatisticsPlugin from "@/Index";
 import i18n from "@/lang";
 
@@ -7,7 +7,6 @@ import i18n from "@/lang";
  */
 export class SampleSettingTab extends PluginSettingTab {
   plugin: DailyStatisticsPlugin;
-
 
   constructor(app: App, plugin: DailyStatisticsPlugin) {
     super(app, plugin);
@@ -18,7 +17,6 @@ export class SampleSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     const t = i18n.global.t;
     containerEl.empty();
-
 
     new Setting(containerEl)
       .setName(t("statisticalDataStorageAddress"))
@@ -42,6 +40,17 @@ export class SampleSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+    new Setting(containerEl)
+      .setName(t("statisticsWord"))
+      .setDesc(t("statisticsWordExplained"))
+      .addToggle((component) =>
+        component
+          .setValue(this.plugin.settings.statisticsWord)
+          .onChange(async (value) => {
+            this.plugin.settings.statisticsWord = value;
+            await this.plugin.saveSettings();
+          })
+      );
     // new Setting(containerEl)
     //   .setName("每日目标")
     //   .setDesc("设置每日目标。修改该配置后，需要重新加载插件。")
@@ -62,4 +71,3 @@ export class SampleSettingTab extends PluginSettingTab {
     //   );
   }
 }
-

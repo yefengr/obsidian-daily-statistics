@@ -25,6 +25,8 @@ export default {
   "statisticalDataStorageAddressExplained": "设置每日统计数据保存地址，如果为空，则保存在默认的插件目录下。如果数据文件存在父级文件夹，请提前创建。建议使用 .json 的数据格式。修改该配置后，需要重新加载插件。"
   , "statisticsCatalog": "统计目录"
   , "statisticsCatalogExplained": "设置需要统计数据的目录，如果为空，则统计全库的数据。"
+  ,"statisticsWord":"统计单词"
+  ,"statisticsWordExplained":"统计单词而不是字符。"
 
 // 状态栏
   , "todaySWordCount": "今日字数："

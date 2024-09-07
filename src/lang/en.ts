@@ -27,6 +27,8 @@ export default {
   "statisticsCatalog": "Statistics Directory"
   ,
   "statisticsCatalogExplained": "Set the directory where statistical data is required. If it is empty, the data of the entire database will be counted."
+  ,"statisticsWord":"Count words"
+  ,"statisticsWordExplained":"Count words instead of characters."
 
 // 状态栏
   , "todaySWordCount": "Today's word count: "

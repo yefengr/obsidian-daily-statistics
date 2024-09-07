@@ -4,7 +4,7 @@ import {
   MarkdownView,
   Plugin,
   TFile,
-  type WorkspaceLeaf
+  type WorkspaceLeaf,
 } from "obsidian";
 import { DailyStatisticsSettings } from "@/data/Settting";
 import { DailyStatisticsDataManagerInstance } from "@/data/StatisticsDataManager";
@@ -12,7 +12,6 @@ import { CalendarView, Calendar_View } from "@/ui/calendar/CalendarView";
 import { SampleSettingTab } from "@/ui/setting/SampleSettingTab";
 import i18n from "@/lang";
 import moment from "moment/moment";
-
 
 /**
  * 插件核心类
@@ -23,45 +22,43 @@ export default class DailyStatisticsPlugin extends Plugin {
   private statusBarItemEl!: HTMLElement;
   calendarView!: CalendarView;
 
-
   async onload() {
-
     // 尽早的设置时间地域
     const locale = i18n.global.locale.value;
     if (locale == "zh_cn") {
       moment.locale("zh-cn", {
         week: {
-          dow: 1
-        }
+          dow: 1,
+        },
       });
     }
 
     const t = i18n.global.t;
     await this.loadSettings();
 
-
     DailyStatisticsDataManagerInstance.init(
       this.settings.dataFile,
       this.app,
       this
     );
-    DailyStatisticsDataManagerInstance.loadStatisticsData().then(() => {
-      // 数据加载完成之后，再创建视图
-      setTimeout(() => {
-        this.registerView(Calendar_View, (leaf) => {
-          this.calendarView = new CalendarView(leaf, this);
-          return this.calendarView;
-        });
-        this.activateView();
-      }, 500);
+    DailyStatisticsDataManagerInstance.loadStatisticsData()
+      .then(() => {
+        // 数据加载完成之后，再创建视图
+        setTimeout(() => {
+          this.registerView(Calendar_View, (leaf) => {
+            this.calendarView = new CalendarView(leaf, this);
+            return this.calendarView;
+          });
+          this.activateView();
+        }, 500);
+      })
+      .catch((e) => {
+        console.error("loadStatisticsData error", e);
+      });
 
-
-    }).catch((e) => {
-      console.error("loadStatisticsData error", e);
-    });
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
-        // // // console.log("debounce updateWordCount" + filepath);
+        // console.log("debounce updateWordCount" + filepath);
         if (
           this.settings.statisticsFolder != null &&
           this.settings.statisticsFolder != "" &&
@@ -79,7 +76,6 @@ export default class DailyStatisticsPlugin extends Plugin {
       false
     );
 
-
     // 定时在的状态栏更新本日字数
     this.statusBarItemEl = this.addStatusBarItem();
     // statusBarItemEl.setText('Status Bar Text');
@@ -87,9 +83,8 @@ export default class DailyStatisticsPlugin extends Plugin {
       window.setInterval(() => {
         this.statusBarItemEl.setText(
           t("todaySWordCount") +
-          DailyStatisticsDataManagerInstance.currentWordCount
-        )
-        ;
+            DailyStatisticsDataManagerInstance.currentWordCount
+        );
       }, 1000)
     );
 
@@ -97,26 +92,26 @@ export default class DailyStatisticsPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("quick-preview", this.onQuickPreview.bind(this))
     );
+    // 当文件被打开时，便统计一次字数
+    this.registerEvent(
+      this.app.workspace.on("file-open", this.onFileOpen.bind(this))
+    );
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SampleSettingTab(this.app, this));
-
 
     this.addCommand({
       id: "open-calendar",
       name: t("openTheCalendarPanel"),
       callback: () => {
         this.activateView();
-      }
+      },
     });
   }
 
-
   onunload() {
     // this.statusBarItemEl.remove()
-
   }
-
 
   async activateView() {
     const { workspace } = this.app;
@@ -141,7 +136,6 @@ export default class DailyStatisticsPlugin extends Plugin {
     // "Reveal" the leaf in case it is in a collapsed sidebar
     workspace.revealLeaf(leaf);
   }
-
 
   async loadSettings() {
     this.settings = Object.assign(
@@ -168,7 +162,10 @@ export default class DailyStatisticsPlugin extends Plugin {
       this.debouncedUpdate(contents, file.path);
     }
   }
+
+  onFileOpen(file: TFile) {
+    if (this.app.workspace.getActiveViewOfType(MarkdownView)) {
+      this.debouncedUpdate(null, file.path);
+    }
+  }
 }
-
-
-
