@@ -252,6 +252,14 @@ export class DailyStatisticsDataManager {
     this.data.currentManuallyModifyWordCount = wordCount - actualValue;
     this.currentWordCount = wordCount;
   }
+
+  /**
+   * 重置当日统计数据
+   */
+  resetCurrentDayStatistics() {
+    this.data.todayWordCount = {};
+    this.updateCounts();
+  }
 }
 
 /**
