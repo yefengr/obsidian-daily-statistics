@@ -45,11 +45,16 @@ export default class DailyStatisticsPlugin extends Plugin {
       .then(() => {
         // 数据加载完成之后，再创建视图
         setTimeout(() => {
-          this.registerView(Calendar_View, (leaf) => {
-            this.calendarView = new CalendarView(leaf, this);
-            return this.calendarView;
-          });
-          this.activateView();
+          try {
+            this.registerView(Calendar_View, (leaf) => {
+              this.calendarView = new CalendarView(leaf, this);
+              return this.calendarView;
+            });
+          } catch (e) {
+            console.error("registerView error", e);
+          }
+
+          this.openForTheFirstTime();
         }, 500);
       })
       .catch((e) => {
@@ -109,8 +114,33 @@ export default class DailyStatisticsPlugin extends Plugin {
     });
   }
 
+  // 自定义方法，通过 workspace API 检查视图类型是否已经加载
+  isViewAlreadyLoaded(viewType) {
+    const leaves = this.app.workspace.getLeavesOfType(viewType);
+    return leaves.length > 0; // 如果有至少一个已存在的视图，返回 true
+  }
+
+  /**
+   * 启动检查，如果是初次安装，则默认打开窗口
+   * @private
+   */
+  private async openForTheFirstTime() {
+    const { workspace } = this.app;
+
+    const leaves = workspace.getLeavesOfType(Calendar_View);
+    // 初次使用时，没有侧边栏按钮，则打开一个
+    if (leaves.length == 0) {
+      await this.activateView();
+    }
+  }
+
   onunload() {
-    // this.statusBarItemEl.remove()
+    this.statusBarItemEl.remove();
+    const { workspace } = this.app;
+    const leaves = workspace.getLeavesOfType(Calendar_View);
+    if (leaves.length > 0) {
+      leaves[0].detach();
+    }
   }
 
   async activateView() {
